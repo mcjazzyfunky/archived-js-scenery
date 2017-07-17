@@ -1,3 +1,8 @@
-import { Button } from '../main/api/component/Button.js';
+import {
+    render
+} from 'js-surface';
 
-alert(Button)
+import DemoApp from './master/DemoApp';
+
+render(DemoApp(), 'main-content');
+

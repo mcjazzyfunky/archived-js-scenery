@@ -1,7 +1,12 @@
-
 System.config({
     baseURL: '../..',
     transpiler: 'plugin-babel',
+    
+    packages: {
+        '': {
+            defaultExtension: 'js'
+        }
+    },
 
     meta: {
         '*.js': {
@@ -11,8 +16,12 @@ System.config({
             format: 'global',
             deps: ['jquery'],
             presets: ['es2017']
+        },
+        'js-surface': {
+            deps: ['js-spec', 'react', 'react-dom']
         }
     },
+
     map: {
         'jquery': 'node_modules/jquery/dist/jquery.js',
         'plugin-babel': 'node_modules/systemjs-plugin-babel/plugin-babel.js',
@@ -31,7 +40,7 @@ System.config({
 
         'js-spec': 'node_modules/js-spec/dist/js-spec.min.js',
 
-        'js-surface': 'node_modules/js-surface/dist/standalone.js',
-        'js-prelude': 'node_modules/js-prelude/dist/js-prelude/js-prelude.min.js',
+        'js-surface': 'node_modules/js-surface/dist/react-dom.js',
+        'js-essential': 'node_modules/js-essential/dist/js-essential/js-essential.js'
     }
 });
