@@ -1,3 +1,5 @@
+import DataTableHelper from '../../internal/helper/DataTableHelper';
+
 import {
     createElement as h,
     defineClassComponent
@@ -24,7 +26,7 @@ const tableConfigSpec =
                 ).usingHint('Must be a valid column configuration'))
     });
 
-    export default defineClassComponent({
+export default defineClassComponent({
     displayName: 'DataTable',
 
     properties: {
@@ -42,7 +44,8 @@ const tableConfigSpec =
     render() {
         const
             props = this.props,
-            columns = props.columns,
+            config = props.config,
+            metric = DataTableHelper.getTableMetric(config),
             data = props.data;
         
         return (
