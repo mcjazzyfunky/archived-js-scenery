@@ -23,7 +23,7 @@ const tableConfigSpec =
                         title: Spec.string,
                         columns: Spec.lazy(() => tableConfigSpec.columns)
                     })
-                ).usingHint('Must be a valid column configuration'))
+                ))
     });
 
 export default defineClassComponent({
@@ -45,24 +45,29 @@ export default defineClassComponent({
         const
             props = this.props,
             config = props.config,
-            metric = DataTableHelper.getTableMetric(config),
+            metrics = DataTableHelper.calcTableMetrics(config),
             data = props.data;
         
         return (
             h('div > table',
-                createTableHeader(columns),
-                createTableBody(columns, data))
+                createTableHeader(metrics),
+                createTableBody(metrics, data))
         );
     }
 });
 
 // ------------------------------------------------------------------
 
-function createTableHeader(columns) {
+function createTableHeader(metrics) {
     const ret =
-        h('thead > tr',
-            Seq.from(columns)
-                .map(column => createHeaderColumn(column)));
+        h('thead',
+            Seq.from(metrics.headers)
+                .map(headerRow =>
+                    h('tr',
+                        Seq.from(headerRow).map(cell =>
+                            h('th',
+                                { colSpan: cell.colspan, rowSpan: cell.rowspan },
+                                cell.title)))));
 
     return ret;
 }
@@ -75,5 +80,5 @@ function createHeaderColumn(column) {
 }
 
 function createTableBody(columns, data) {
-
+    return null;
 }

@@ -6,17 +6,45 @@ import {
 import DataTable from '../../main/api/component/DataTable';
 
 const
-    columns = [
-        { title: 'Column1',
-            field: 'a'
+    config2 =
+        {
+            columns: [
+                { title: 'Column1',
+                    field: 'a'
+                },
+                { title: 'Column2',
+                    field: 'b'
+                },
+                { title: 'Column3',
+                    field: 'b'
+                }
+            ]
+        };
+
+const config = {
+    columns: [
+        { title: 'SNo.'
         },
-        { title: 'Column2',
-            field: 'b'
+        { title: 'Name',
+            columns: [
+                { title: '1' },
+                { title: '2' }
+            ]
         },
-        { title: 'Column3',
-            field: 'b'
+        { title: 'Language',
+            columns: [
+                { title: 'Native'
+                },
+                { title: 'Others',
+                    columns: [
+                        { title: "2"},
+                        { title: "3"}
+                    ]
+                }
+            ]    
         }
-    ];
+    ]
+};
 
 const data = [
     { firstName: 'Jane',
@@ -35,6 +63,6 @@ export default defineClassComponent({
 
     render() {
         return h('div',
-            DataTable({ columns, data }));
+            DataTable({ config, data }));
     }
 });
