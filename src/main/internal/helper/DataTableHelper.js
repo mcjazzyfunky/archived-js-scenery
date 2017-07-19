@@ -1,8 +1,18 @@
 export default class DataTableHelper {
-    static calcTableMetrics(config) {
+    static buildTableMetrics(config, data) {
         const result =  {
             headers: [],
-            columns: []
+            columns: [],
+            showRecordNumbers: !!config.recordNumbers,
+            offsetRecordNumbers:
+                config.recordNumbers
+                    && typeof config.recordNumbers === 'object'
+                    ? config.recordNumbers.offset || 0
+                    : 0, 
+            selectionMode:
+                config.selectionMode || 'none',
+                
+            data
         };
 
         walkColumnsConfig(config.columns, result);
@@ -15,18 +25,23 @@ function walkColumnsConfig(columns, result, colspan = 0, depth = 0, ancestors = 
     for (let i = 0; i < columns.length; ++i) {
         const column = columns[i];
 
-        const title = column.title;
+        const
+            title = column.title,
+            field = column.field;
 
         if (depth >= result.headers.length) {
             result.headers.push([]);
         }
 
         if (!column.columns) {
-            const cell = { title, colspan: 1, rowspan: null, depth };
+            const
+                align = column.align || 'center',
+                cell = { title, field, colspan: 1, rowspan: null, align, depth };
+            
             result.headers[depth].push(cell);
             result.columns.push(cell);
         } else {
-            const header = { title, colspan: column.columns.length, rowspan: 1, depth };
+            const header = { title, colspan: column.columns.length, align: 'center', rowspan: 1 };
 
             for (let j = 1; j < ancestors.length; ++j) {
                 ancestors[j].colspan++;
@@ -43,6 +58,7 @@ function walkColumnsConfig(columns, result, colspan = 0, depth = 0, ancestors = 
 
             for (const column of result.columns) {
                 column.rowspan = numHeaderRows - column.depth;
+                delete(column.depth);
             }
         }
     }

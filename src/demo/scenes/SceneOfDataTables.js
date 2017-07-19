@@ -6,22 +6,41 @@ import {
 import DataTable from '../../main/api/component/DataTable';
 
 const
-    config2 =
+    config =
         {
             columns: [
-                { title: 'Column1',
-                    field: 'a'
+                { title: 'Name',
+                    columns: [
+                        { title: 'First name',
+                            field: 'firstName',
+                            align: 'center'
+                        },
+                        { title: 'Last name',
+                            field: 'lastName',
+                            align: 'right'
+                        }
+                    ]
                 },
-                { title: 'Column2',
-                    field: 'b'
-                },
-                { title: 'Column3',
-                    field: 'b'
+                { title: 'Adress',
+                    columns: [
+                        { title: 'Street',
+                            field: 'street'
+                        },
+                        { title: 'Postal code',
+                            field: 'postalCode'
+                        },
+                        { title: 'City',
+                            field: 'city'
+                        }
+                    ]
                 }
-            ]
+            ],
+
+            recordNumbers: { offset: 0 },
+            selectionMode: 'multi'
         };
 
-const config = {
+const config2 = {
     columns: [
         { title: 'SNo.'
         },
@@ -47,6 +66,21 @@ const config = {
 };
 
 const data = [
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',
