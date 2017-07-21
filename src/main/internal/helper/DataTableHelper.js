@@ -11,7 +11,15 @@ export default class DataTableHelper {
                     : 0, 
             selectionMode:
                 config.selectionMode || 'none',
-                
+
+
+            actions: [
+                { text: 'Edit' },
+                { text: 'Delete' }
+            ],
+
+            hasActions: true,
+            
             data
         };
 

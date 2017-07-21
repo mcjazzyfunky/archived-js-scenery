@@ -4,6 +4,7 @@ import {
 } from 'js-surface';
 
 import DataTable from '../../main/api/component/DataTable';
+import DataNavigator from '../../main/api/component/DataNavigator';
 
 const
     config =
@@ -86,6 +87,41 @@ const data = [
         street: 'Main Street 123',
         city: 'Towny Town'
     },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        city: 'Towny Town'
+    },
     { firstName: 'John',
         lastName: 'Doe',
         street: 'Main Street 123',
@@ -97,6 +133,6 @@ export default defineClassComponent({
 
     render() {
         return h('div',
-            DataTable({ config, data }));
+            DataNavigator({ config, data }));
     }
 });

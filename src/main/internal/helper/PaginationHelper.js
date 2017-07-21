@@ -12,7 +12,7 @@ export default class PaginationHelper {
             ret.pageSize = -1;
         }
 
-        ret.totalItemCount = isNaN(totalItemCount) ? -1 : Math.max(-1, parseInt(totalItemCount, 10));
+        ret.totalItemCount = isNaN(totalItemCount) ? -1 : Math.max(-1, Number.parseInt(totalItemCount, 10));
 
         ret.pageCount = (ret.totalItemCount == -1 || ret.pageSize == -1)
             ? -1
@@ -21,6 +21,11 @@ export default class PaginationHelper {
         ret.isFirstPage = ret.pageIndex === 0;
 
         ret.isLastPage = ret.pageCount > 0 && ret.pageCount === ret.pageIndex + 1;
+
+        ret.valid =
+            ret.pageIndex >= 0
+                && ret.pageCount >= 0
+                && ret.pageSize > 0;
 
         return ret;
     }

@@ -59,7 +59,7 @@ export default defineClassComponent({
             metrics = DataTableHelper.buildTableMetrics(config, data);
        
         return (
-            h('div > table.ui.celled.structured.compact.striped.table',
+            h('div > table.ui.celled.compact.striped.table',
                 h('colgroup',
                     h('col', { style: { width: '20px' } }),
                     h('col', { style: { width: '20px' } }),
@@ -67,7 +67,8 @@ export default defineClassComponent({
                     h('col'),
                     h('col'),
                     h('col'),
-                    h('col')),
+                    h('col'),
+                    h('col', { style: { width: '20px' } })),
                 createTableHeader(metrics),
                 createTableBody(metrics))
         );
@@ -87,7 +88,9 @@ function createTableHeader(metrics) {
 }
 
 function createTableHeaderRow(headerRow, idx, metrics) {
-    let addits = [];
+    let
+        addits = [],
+        tailExtra = null;
 
     const numHeaderRows = metrics.headers.length;
 
@@ -95,7 +98,7 @@ function createTableHeaderRow(headerRow, idx, metrics) {
         if (idx === 0 && numHeaderRows > 1) {
             addits.push(h('th', { rowSpan: numHeaderRows - 1, style }));
         } else {
-            addits.push(h('th.center.aligned', { style }, '#'));
+            addits.push(h('th.center.aligned', { style }, ''));
         }
     }
 
@@ -106,7 +109,7 @@ function createTableHeaderRow(headerRow, idx, metrics) {
             addits.push(
                 h('th.center.aligned',
                     { style },
-                    h('div.ui.checkbox.checked',
+                    h('div.ui.checkbox',
                         h('input[type=checkbox]'),
                         h('label', { style: { position: 'absolute' } }))));
         } else {
@@ -115,11 +118,20 @@ function createTableHeaderRow(headerRow, idx, metrics) {
         }
     }
 
+    if (metrics.hasActions) {
+        if (idx === 0 && numHeaderRows > 1) {
+            tailExtra = h('th', { rowSpan: numHeaderRows - 1 });
+        } else {
+            tailExtra = h('th.center.aligned', '');
+        }
+    }
+
     return (
         h('tr',
             addits,
             Seq.from(headerRow)
-                .map(createTableHeaderCell))
+                .map(createTableHeaderCell),
+            tailExtra)
     );
 
 }
@@ -146,12 +158,12 @@ function createTableBody(metrics) {
 }
 
 function createTableBodyRow(rec, idx, metrics) {
-    let addits = [];
+    let addits = [],
+        tailExtra = null;
     
     if (metrics.showRecordNumbers) {
         addits.push(
-            h('td.center.aligned',
-                { style }, 
+            h('td.center.aligned > i',
                 metrics.offsetRecordNumbers + idx + 1));
     }
 
@@ -169,12 +181,18 @@ function createTableBodyRow(rec, idx, metrics) {
                 h('input[type=radio].ui.radio')));
     }
 
+    if (metrics.hasActions) {
+        tailExtra = h('td.center.aligned',
+            createActionButtonGroup(rec, metrics));
+    }
+
     return (
         h('tr',
             addits,
             Seq.from(metrics.columns)
                 .map(column =>
-                    createTableBodyCell(column, rec)))
+                    createTableBodyCell(column, rec)),
+            tailExtra)
     );
 }
 
@@ -184,4 +202,10 @@ function createTableBodyCell(column, rec) {
             { className: `${column.align} aligned`},
             rec[column.field])
     );
+}
+
+function createActionButtonGroup(rec, metrics) {
+    return h('div.ui.text.menu',
+        h('a.item', h('i.icon.edit.outline')),
+        h('a.item', h('i.icon.trash.outline')));
 }
