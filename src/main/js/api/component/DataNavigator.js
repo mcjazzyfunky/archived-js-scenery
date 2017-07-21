@@ -24,15 +24,15 @@ export default defineClassComponent({
             h('div.ui.text.menu',
                 h('div.item',
                     Pagination({
-                        pageIndex: 3,
+                        pageIndex: 2,
                         pageSize: 50,
                         totalItemCount: 1000,
-                        mode: 'page-buttons'
+                        mode: 'pager'
                     })),
 
                 h('div.item',
                     Pagination({
-                        pageIndex: 3, 
+                        pageIndex: 2, 
                         pageSize: 25,
                         totalItemCount: 1000,
                         mode: 'page-size-selector'
@@ -40,7 +40,7 @@ export default defineClassComponent({
 
                 h('div.item',
                     Pagination({
-                        pageIndex: 3,
+                        pageIndex: 2,
                         pageSize: 50,
                         totalItemCount: 1000,
                         mode: 'info-about-records'

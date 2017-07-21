@@ -91,7 +91,7 @@ function createDefaultPaginator(metrics) {
         firstPageButton =  createFirstPageButton(),
         previousPageButton = createPreviousPageButton(),
         nextPageButton = createNextPageButton(),
-        lastPageButton = createLastPageButton(),
+        lastPageButton = createLastPageButton(metrics),
 
         pageNoControl =
             h('div.ui.input.item.small',
@@ -177,7 +177,7 @@ function createPageButtonsPaginator(props) {
         nextPageButton = createNextPageButton(metrics),
 
         lastPageButton = createLastPageButton(metrics, metrics.pageCount);
-console.log(paginationInfo)
+
     return (
         h('div.ui.menu.text',
             previousPageButton,
@@ -262,7 +262,7 @@ function createClickHandler(onClick) {
 
 function createFirstPageButton(metrics, text) {
     const
-        isNumericText = !isNaN(text),
+        isNumericText = text !== null && !isNaN(text),
 
         children =
             isNumericText
@@ -290,12 +290,12 @@ function createNextPageButton(metrics) {
 
 function createLastPageButton(metrics, text = null) {
     const
-        isNumericText = !isNaN(text),
-
+        isNumericText = text !== null && !isNaN(text),
         children =
             isNumericText
                 ? text
                 : h('i.angle.double.right.icon.large');
+
     return (
         h('a.item.icon',
             children)
