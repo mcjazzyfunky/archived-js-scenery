@@ -27,7 +27,7 @@ export default defineClassComponent({
                         pageIndex: 2,
                         pageSize: 50,
                         totalItemCount: 1000,
-                        mode: 'pager'
+                        mode: 'advanced-paginator'
                     })),
 
                 h('div.item',

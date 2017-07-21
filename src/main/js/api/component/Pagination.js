@@ -1,5 +1,4 @@
 import ComponentHelper from '../helper/ComponentHelper';
-import PaginationHelper from '../../internal/helper/PaginationHelper';
 
 import { defineFunctionalComponent, createElement as h } from 'js-surface';
 import { Seq } from 'js-essential';
@@ -11,34 +10,35 @@ export default defineFunctionalComponent({
     properties: {
         pageIndex: {
             type: Number,
-            nullable: true,
-            defaultValue: null
+            constraint: Spec.nonnegativeInteger,
+            nullable: true
         },
 
         pageSize: {
             type: Number,
-            nullable: true,
-            defaultValue: null
+            constraint: Spec.nonnegativeInteger, 
+            nullable: true
         },
         
         totalItemCount: {
             type: Number,
-            nullable: true,
-            defaultValue: null
+            constraint: Spec.nonnegativeInteger,
+            nullable: true
         },
 
         mode: {
+            type: String,
             constraint:
                 Spec.oneOf(
-                    'default',
-                    'pager',    
-                    'page-buttons',
+                    'standard-paginator',
+                    'simple-paginator',    
+                    'advanced-paginator',
                     'page-size-selector',
                     'info-about-page',
                     'info-about-records'),
          
             defaultValue:
-                'default' 
+                'standard-paginator' 
         },
         
         className: {
@@ -52,76 +52,53 @@ export default defineFunctionalComponent({
         let ret = null;
         
         const
-            metrics =
-                PaginationHelper.calcPaginationMetrics(
-                    props.pageIndex, props.pageSize, props.totalItemCount);
+            facts = gatherPaginationFacts(
+                props.pageIndex, props.pageSize, props.totalItemCount);
 
 
         switch(props.mode) {
-        case 'page-buttons':
-            ret = createPageButtonsPaginator(metrics);
+        case 'standard-paginator':
+            ret = createStandardPaginator(facts);
             break;
         
-        case 'pager':
-            ret = createPagerPaginator(metrics);
+        case 'simple-paginator':
+            ret = createSimplePaginator(facts);
+            break;
+        
+        case 'advanced-paginator':
+            ret = createAdvancedPaginator(facts);
             break;
 
         case 'page-size-selector':
-            ret = createPageSizeSelector(metrics);
+            ret = createPageSizeSelector(facts);
             break;
         
         case 'info-about-page':
-            ret = h('span', buildInfoTextAboutPage(metrics));
+            ret = h('div.item', buildInfoTextAboutPage(facts));
             break;
 
         case 'info-about-records':
-            ret = h('span', buildInfoTextAboutRecords(metrics));
+            ret = h('div.item', buildInfoTextAboutRecords(facts));
             break;
 
         default:
-            ret = createDefaultPaginator(metrics);
+            // This should never happen
+            throw new Error(`[Pagination] Illegal mode '${props.mode}'`);
         }
 
         return ret;
     }
 });
 
-function createDefaultPaginator(metrics) {
-    const
-        firstPageButton =  createFirstPageButton(),
-        previousPageButton = createPreviousPageButton(),
-        nextPageButton = createNextPageButton(),
-        lastPageButton = createLastPageButton(metrics),
 
-        pageNoControl =
-            h('div.ui.input.item.small',
-                h('input[type=text][size=3]'));
-
-    return (
-        h('div',
-        h('div.ui.text.menu',
-            firstPageButton,
-            previousPageButton,
-       // h('div.ui.text.menu',
-            h('div.item', 'Page'),
-            pageNoControl,
-            h('div.item', 'of 1000'),
-      //  h('div.ui.menu.xright.xfloated.tiny',
-            nextPageButton,
-            lastPageButton
-        ))                                                                          
-    );
-}
-
-function createPageButtonsPaginator(props) {
+function createStandardPaginator(props) {
     const
         pageIndex = props.pageIndex,
 
-        metrics =
-            PaginationHelper.calcPaginationMetrics(
-                props.pageIndex,
-                props.pageSize,
-                props.totalItemCount),
+        facts = gatherPaginationFacts(
+            props.pageIndex,
+            props.pageSize,
+            props.totalItemCount),
 
         textGoToFirstPage = 'Go to first page',
         textGoToPreviousPage = 'Go to previous page',
@@ -129,9 +106,9 @@ function createPageButtonsPaginator(props) {
         textGoToLastPage = 'Go to next page',
 
         paginationInfo =
-            PaginationHelper.determineVisiblePaginationButtons(
+            determineVisiblePageButtons(
                 props.pageIndex,
-                metrics.pageCount,
+                facts.pageCount,
                 6),
 
         moveToPage = targetPage => {
@@ -140,9 +117,9 @@ function createPageButtonsPaginator(props) {
             }
         },
 
-        firstPageButton = createFirstPageButton(metrics, 1),
+        firstPageButton = createFirstPageButton(facts, 1),
         
-        previousPageButton = createPreviousPageButton(metrics),
+        previousPageButton = createPreviousPageButton(facts),
         
         precedingEllipsisLink =
             paginationInfo.firstButtonIndex === 1
@@ -167,16 +144,16 @@ function createPageButtonsPaginator(props) {
                             index + 1)),
                     
         succeedingEllipsisLink =
-            paginationInfo.lastButtonIndex === metrics.pageCount
+            paginationInfo.lastButtonIndex === facts.pageCount
                 ? null
                 : h('a.item',
                     { onClick: createClickHandler(() => moveToPage(1))
                     },
                     '...'),
         
-        nextPageButton = createNextPageButton(metrics),
+        nextPageButton = createNextPageButton(facts),
 
-        lastPageButton = createLastPageButton(metrics, metrics.pageCount);
+        lastPageButton = createLastPageButton(facts, facts.pageCount);
 
     return (
         h('div.ui.menu.text',
@@ -191,13 +168,13 @@ function createPageButtonsPaginator(props) {
     );
 }
 
-function createPagerPaginator(metrics) {
+function createSimplePaginator(facts) {
     const
-        firstPageButton = createFirstPageButton(metrics),
-        previousPageButton = createPreviousPageButton(metrics),
-        nextPageButton = createNextPageButton(metrics),
-        lastPageButton = createLastPageButton(metrics),
-        infoAboutPage = h('div.item.ui.large.label', buildInfoTextAboutPage(metrics));
+        firstPageButton = createFirstPageButton(facts),
+        previousPageButton = createPreviousPageButton(facts),
+        nextPageButton = createNextPageButton(facts),
+        lastPageButton = createLastPageButton(facts),
+        infoAboutPage = h('div.item.ui.large.label', buildInfoTextAboutPage(facts));
     
     return (
         h('div.ui.text.menu',
@@ -208,6 +185,34 @@ function createPagerPaginator(metrics) {
             lastPageButton)
     );
 }
+
+function createAdvancedPaginator(facts) {
+    const
+        firstPageButton =  createFirstPageButton(),
+        previousPageButton = createPreviousPageButton(),
+        nextPageButton = createNextPageButton(),
+        lastPageButton = createLastPageButton(facts),
+
+        pageNoControl =
+            h('div.ui.input.item.small',
+                h('input[type=text][size=3]'));
+
+    return (
+        h('div',
+        h('div.ui.text.menu',
+            firstPageButton,
+            previousPageButton,
+       // h('div.ui.text.menu',
+            h('div.item', 'Page'),
+            pageNoControl,
+            h('div.item', 'of 1000'),
+      //  h('div.ui.menu.xright.xfloated.tiny',
+            nextPageButton,
+            lastPageButton
+        ))                                                                          
+    );
+}
+
 
 function buildInfoTextAboutPage({ pageIndex, pageCount, valid }) {
     return valid
@@ -260,7 +265,7 @@ function createClickHandler(onClick) {
 }
 
 
-function createFirstPageButton(metrics, text) {
+function createFirstPageButton(facts, text) {
     const
         isNumericText = text !== null && !isNaN(text),
 
@@ -274,21 +279,21 @@ function createFirstPageButton(metrics, text) {
     );
 }
 
-function createPreviousPageButton(metrics) {
+function createPreviousPageButton(facts) {
     return (
         h('a.item.icon',
             h('i.angle.left.icon.large'))
     );
 }
 
-function createNextPageButton(metrics) {
+function createNextPageButton(facts) {
     return (
         h('a.item.icon',
             h('i.angle.right.icon.large'))
     );
 }
 
-function createLastPageButton(metrics, text = null) {
+function createLastPageButton(facts, text = null) {
     const
         isNumericText = text !== null && !isNaN(text),
         children =
@@ -300,5 +305,63 @@ function createLastPageButton(metrics, text = null) {
         h('a.item.icon',
             children)
     );
+}
+
+// -----------------------------------
+
+function gatherPaginationFacts(pageIndex, pageSize, totalItemCount) {
+    const ret = {};
+
+    ret.pageIndex = isNaN(pageIndex) ? -1 : Math.max(-1, parseInt(pageIndex, 10));
+
+    ret.pageSize = isNaN(pageSize)
+        ? (pageSize === null || pageSize === Infinity ? Infinity : -1)
+        : Math.floor(pageSize);
+
+    if (ret.pageSize <= 0) {
+        ret.pageSize = -1;
+    }
+
+    ret.totalItemCount = isNaN(totalItemCount) ? -1 : Math.max(-1, Number.parseInt(totalItemCount, 10));
+
+    ret.pageCount = (ret.totalItemCount == -1 || ret.pageSize == -1)
+        ? -1
+        : Math.ceil(ret.totalItemCount / ret.pageSize);
+
+    ret.isFirstPage = ret.pageIndex === 0;
+
+    ret.isLastPage = ret.pageCount > 0 && ret.pageCount === ret.pageIndex + 1;
+
+    ret.valid =
+        ret.pageIndex >= 0
+            && ret.pageCount >= 0
+            && ret.pageSize > 0;
+
+    return ret;
+}
+
+function determineVisiblePageButtons(pageIndex, pageCount, maxPageButtonCount) {
+    const
+        pageNumber = pageIndex + 1,
+        pageButtonCount = Math.min(maxPageButtonCount, pageCount);
+
+    var firstPageNumber,
+        lastPageNumber;
+
+    if (pageButtonCount === pageCount || pageNumber <= Math.round(pageButtonCount / 2)) {
+        firstPageNumber = 2;
+    } else if (pageCount - pageNumber < Math.round(pageButtonCount / 2)) {
+        firstPageNumber = pageCount - pageButtonCount + 2;
+    } else {
+        firstPageNumber = pageNumber - Math.round(pageButtonCount / 2) + 2;
+    }
+
+    lastPageNumber = firstPageNumber + pageButtonCount - 3;
+
+    return {
+        pageButtonCount: pageButtonCount,
+        firstButtonIndex: firstPageNumber - 1,
+        lastButtonIndex: lastPageNumber - 1
+    };
 }
 
