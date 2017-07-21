@@ -5,7 +5,7 @@ import {
 
 import { Seq } from 'js-essential';
 
-import Button from '../../main/api/component/Button';
+import Button from '../../main/js/api/component/Button';
 
 const
     buttonTypes = ['default', 'primary', 'success', 'info', 'warning', 'danger', 'link'],

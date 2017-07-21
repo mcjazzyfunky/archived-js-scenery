@@ -3,8 +3,8 @@ import {
     defineClassComponent
 } from 'js-surface';
 
-import DataTable from '../../main/api/component/DataTable';
-import DataNavigator from '../../main/api/component/DataNavigator';
+import DataTable from '../../main/js/api/component/DataTable';
+import DataNavigator from '../../main/js/api/component/DataNavigator';
 
 const
     config =

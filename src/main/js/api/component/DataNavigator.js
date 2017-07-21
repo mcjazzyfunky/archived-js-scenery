@@ -24,25 +24,23 @@ export default defineClassComponent({
             h('div.ui.text.menu',
                 h('div.item',
                     Pagination({
-                        pageIndex: 0,
+                        pageIndex: 3,
                         pageSize: 50,
                         totalItemCount: 1000,
-                        mode: 'default'
+                        mode: 'page-buttons'
                     })),
-                h('div.item', 'Items/Page: '),
-                h('div.item.ui.inline.dropdown',
-                    h('div.text', '25'),
-                    h('i.dropdown.icon'),
-                    h('div.menu',
-                        h('div.item', 10),
-                        h('div.item', 25),
-                        h('div.item', 50),
-                        h('div.item', 100),
-                        h('div.item', 250))),
 
                 h('div.item',
                     Pagination({
-                        pageIndex: 0,
+                        pageIndex: 3, 
+                        pageSize: 25,
+                        totalItemCount: 1000,
+                        mode: 'page-size-selector'
+                    })),
+
+                h('div.item',
+                    Pagination({
+                        pageIndex: 3,
                         pageSize: 50,
                         totalItemCount: 1000,
                         mode: 'info-about-records'
