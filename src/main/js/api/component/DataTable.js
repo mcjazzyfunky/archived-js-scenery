@@ -205,7 +205,7 @@ function createTableBodyCell(column, rec) {
 }
 
 function createActionButtonGroup(rec, metrics) {
-    return h('div.ui.text.menu',
-        h('a.item', h('i.icon.edit.outline')),
-        h('a.item', h('i.icon.trash.outline')));
+    return h('div.ui.secondary.menu.icon',
+        h('div.item.icon', h('i.icon.edit.outline')),
+        h('div.item.icon', h('i.icon.trash.outline')));
 }

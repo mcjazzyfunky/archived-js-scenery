@@ -156,7 +156,7 @@ function createStandardPaginator(props) {
         lastPageButton = createLastPageButton(facts, facts.pageCount);
 
     return (
-        h('div.ui.menu.text',
+        h('div.ui.secondary.menu',
             previousPageButton,
             firstPageButton,
             precedingEllipsisLink,
@@ -177,7 +177,7 @@ function createSimplePaginator(facts) {
         infoAboutPage = h('div.item.ui.large.label', buildInfoTextAboutPage(facts));
     
     return (
-        h('div.ui.text.menu',
+        h('div.ui.secondary.menu',
             firstPageButton, 
             previousPageButton,
             infoAboutPage,
@@ -198,18 +198,15 @@ function createAdvancedPaginator(facts) {
                 h('input[type=text][size=3]'));
 
     return (
-        h('div',
-        h('div.ui.text.menu',
-            firstPageButton,
-            previousPageButton,
-       // h('div.ui.text.menu',
-            h('div.item', 'Page'),
-            pageNoControl,
-            h('div.item', 'of 1000'),
-      //  h('div.ui.menu.xright.xfloated.tiny',
-            nextPageButton,
-            lastPageButton
-        ))                                                                          
+        h('table > tbody > tr',
+            h('td', firstPageButton),
+            h('td', previousPageButton),
+            h('td', 'Page'),
+            h('td', { style: { padding: '0 10px'}}, pageNoControl),
+            h('td', 'of 1000'),
+            h('td', nextPageButton),
+            h('td', lastPageButton)
+        )                                                                          
     );
 }
 
@@ -222,12 +219,12 @@ function buildInfoTextAboutPage({ pageIndex, pageCount, valid }) {
 
 function createPageSizeSelector({ pageSize }) {
     return (
-        h('div.ui.text.menu',
+        h('div.ui.secondary.menu',
             h('label.item', 'Items/Page:'), 
             h('div.item.ui.inline.dropdown',
                 h('div.text', '25'),
                 h('i.dropdown.icon'),
-                h('div.menu',
+                h('div.ui.secondary.menu',
                     h('div.item', 10),
                     h('div.item', 25),
                     h('div.item', 50),

@@ -21,8 +21,8 @@ export default defineClassComponent({
 
         return h('div',
             DataTable({ config, data }),
-            h('div.ui.text.menu',
-                h('div.item',
+            h('div.ui.three.column.grid',
+                h('div.column.middle.aligned.left.aligned',
                     Pagination({
                         pageIndex: 2,
                         pageSize: 50,
@@ -30,7 +30,7 @@ export default defineClassComponent({
                         mode: 'advanced-paginator'
                     })),
 
-                h('div.item',
+                h('div.stretched.column.middle.aligned',
                     Pagination({
                         pageIndex: 2, 
                         pageSize: 25,
@@ -38,7 +38,7 @@ export default defineClassComponent({
                         mode: 'page-size-selector'
                     })),
 
-                h('div.item',
+                h('div.column.middle.aligned.right.aligned',
                     Pagination({
                         pageIndex: 2,
                         pageSize: 50,
