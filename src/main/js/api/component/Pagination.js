@@ -48,15 +48,15 @@ export default defineFunctionalComponent({
         }
     },
 
-    render(props) {
+    render({ pageIndex, pageSize, totalItemCount, className, mode}) {
         let ret = null;
         
         const
             facts = gatherPaginationFacts(
-                props.pageIndex, props.pageSize, props.totalItemCount);
+                pageIndex, pageSize, totalItemCount, className);
 
 
-        switch(props.mode) {
+        switch(mode) {
         case 'standard-paginator':
             ret = createStandardPaginator(facts);
             break;
@@ -83,7 +83,7 @@ export default defineFunctionalComponent({
 
         default:
             // This should never happen
-            throw new Error(`[Pagination] Illegal mode '${props.mode}'`);
+            throw new Error(`[Pagination] Illegal mode '${mode}'`);
         }
 
         return ret;
@@ -91,29 +91,17 @@ export default defineFunctionalComponent({
 });
 
 
-function createStandardPaginator(props) {
+function createStandardPaginator(facts) {
     const
-        pageIndex = props.pageIndex,
-
-        facts = gatherPaginationFacts(
-            props.pageIndex,
-            props.pageSize,
-            props.totalItemCount),
-
-        textGoToFirstPage = 'Go to first page',
-        textGoToPreviousPage = 'Go to previous page',
-        textGoToNextPage = 'Go to next page',
-        textGoToLastPage = 'Go to next page',
-
         paginationInfo =
             determineVisiblePageButtons(
-                props.pageIndex,
+                facts.pageIndex,
                 facts.pageCount,
                 6),
 
         moveToPage = targetPage => {
-            if (props.onChange) {
-                props.onChange({targetPage});
+            if (facts.onChange) {
+                facts.onChange({targetPage});
             }
         },
 
@@ -124,7 +112,7 @@ function createStandardPaginator(props) {
         precedingEllipsisLink =
             paginationInfo.firstButtonIndex === 1
                 ? null
-                : h('a.item',
+                : h('div.item',
                     { onClick: createClickHandler(() => moveToPage(1))
                     },
                     '...'),
@@ -135,7 +123,7 @@ function createStandardPaginator(props) {
                 paginationInfo.lastButtonIndex + 1)
                 .map(
                     index =>
-                        h(index === props.pageIndex ? 'button.ui.icon.primary.active.button' : 'a.item',
+                        h(index === facts.pageIndex ? 'button.ui.icon.primary.active.button' : 'div.item',
                             { onClick: createClickHandler(() => moveToPage(index)),
                                 tabIndex: -1,
                                 dataPage: index + 1,
@@ -146,7 +134,7 @@ function createStandardPaginator(props) {
         succeedingEllipsisLink =
             paginationInfo.lastButtonIndex === facts.pageCount
                 ? null
-                : h('a.item',
+                : h('div.item',
                     { onClick: createClickHandler(() => moveToPage(1))
                     },
                     '...'),
@@ -198,7 +186,7 @@ function createAdvancedPaginator(facts) {
                 h('input[type=text][size=3]'));
 
     return (
-        h('table > tbody > tr',
+        h('div.sc-Pagination--advanced > table > tbody > tr',
             h('td', firstPageButton),
             h('td', previousPageButton),
             h('td', 'Page'),
@@ -272,20 +260,20 @@ function createFirstPageButton(facts, text) {
                 : h('i.angle.double.left.icon.large');
 
     return (
-        h('a.item.icon', children)
+        h('button.ui.item.icon.button', children)
     );
 }
 
 function createPreviousPageButton(facts) {
     return (
-        h('a.item.icon',
+        h('button.item.ui.icon.button',
             h('i.angle.left.icon.large'))
     );
 }
 
 function createNextPageButton(facts) {
     return (
-        h('a.item.icon',
+        h('button.item.ui.icon.button',
             h('i.angle.right.icon.large'))
     );
 }
@@ -299,15 +287,17 @@ function createLastPageButton(facts, text = null) {
                 : h('i.angle.double.right.icon.large');
 
     return (
-        h('a.item.icon',
+        h('button.item.ui.icon.button',
             children)
     );
 }
 
 // -----------------------------------
 
-function gatherPaginationFacts(pageIndex, pageSize, totalItemCount) {
+function gatherPaginationFacts(pageIndex, pageSize, totalItemCount, className) {
     const ret = {};
+
+    ret.className = className;
 
     ret.pageIndex = isNaN(pageIndex) ? -1 : Math.max(-1, parseInt(pageIndex, 10));
 

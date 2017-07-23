@@ -1,0 +1,51 @@
+/*--------------------------
+  Button
+ --------------------------*/
+
+.sc-Button--flat:not(:hover), 
+.sc-Button--flat:disabled {
+    background: none !important;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none !important;
+}
+
+.sc-Button--link:not(:hover) {
+    background: none !important;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none !important;
+}
+
+.sc-Button--link:not(.basic):hover {
+    background: none !important;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none !important;
+}
+
+.sc-Button--link:not(:disabled):hover a {
+    text-decoration: underline;
+}
+
+/*--------------------------
+  Pagination 
+ --------------------------*/
+
+.sc-Pagination--advanced button {
+    padding: 2px 1px 4px 1px !important;
+    margin: 0 !important;
+}
+
+.sc-Pagination--advanced button:not(:hover),
+.sc-Pagination--advanced button:not(:hover):focus {
+    background: none !important;
+}
+
+/*--------------------------
+  DataNavigator 
+ --------------------------*/
+
+ .sc-DataNavigator-Pagination {
+     border: 2px solid red;
+ }

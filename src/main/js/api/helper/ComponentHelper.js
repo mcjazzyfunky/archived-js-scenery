@@ -1,5 +1,5 @@
 import { Strings } from 'js-essential';
-import { createElement as dom } from 'js-surface';
+import { createElement as h } from 'js-surface';
 
 export default class ComponentHelper {
     static buildCssClass(...tokens) {
@@ -42,22 +42,20 @@ export default class ComponentHelper {
         return ret;
     }
     
-    static createIconElement(icon, className) {
+    static createIconElement(icon, className = null, style = null) {
         let ret = null;
 
         icon = Strings.trimToNull(icon);
         className = ComponentHelper.buildCssClass(className);
 
         if (icon !== null) {
-            if (icon.indexOf('.') >= 0) {
-                ret = dom('img', { href: icon, alt: '', className: className });
-            } else {
-                let match = icon.match(/(?:^|\s)(fa|glyphicon)-./),
-                    fullClassName = (match ? match[1] : '') + ' ' + icon + ' ' + className;
+            if (icon.startsWith('fa-')) {
+                const fullClassName =
+                    className + ' ui icon ' + icon.substr(3).replace('-', ' ');
 
-                if (match) {
-                    ret = dom('span', { className: fullClassName });
-                }
+                ret = h('i', { className: fullClassName, style });
+            } else {
+                ret = h('img', { href: icon, alt: '', className: className, style });
             }
         }
 

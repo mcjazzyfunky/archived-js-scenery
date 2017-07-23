@@ -19,7 +19,7 @@ export default defineClassComponent({
             config = this.props.config,
             data = this.props.data;
 
-        return h('div',
+        return h('div.sc-DataNavigator',
             DataTable({ config, data }),
             h('div.ui.three.column.grid',
                 h('div.column.middle.aligned.left.aligned',
@@ -43,7 +43,8 @@ export default defineClassComponent({
                         pageIndex: 2,
                         pageSize: 50,
                         totalItemCount: 1000,
-                        mode: 'info-about-records'
+                        mode: 'info-about-records',
+                        className: 'sc-DataNavigator-Pagination'
                     }))),
             
         );

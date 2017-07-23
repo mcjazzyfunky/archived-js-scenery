@@ -25,9 +25,15 @@ export default defineFunctionalComponent({
         type: {
             type: String,
             constraint: Spec.oneOf(
-                'default', 'primary', 'link', 'info',
-                'warning', 'danger', 'success'),
+                'default', 'primary', 'secondary',
+                'positive', 'negative', 'flat', 'link'),
+
             defaultValue: 'default'
+        },
+
+        outlined: {
+            type: Boolean,
+            defaultValue: false
         },
 
         disabled: {
@@ -38,14 +44,13 @@ export default defineFunctionalComponent({
         size: {
             type: String,
             constraint: Spec.oneOf(
-                'normal', 'large', 'small'),
-            defaultValue: 'normal'
+                'mini', 'tiny', 'small', 'medium', 'large', 'big', 'huge', 'massive'),
+            defaultValue: 'medium'
         },
 
         iconPosition: {
             type: String,
-            constraint: Spec.oneOf(
-                'top', 'bottom', 'left', 'right'),
+            constraint: Spec.oneOf('left', 'top'),
             defaultValue: 'left'
         },
 
@@ -85,17 +90,24 @@ export default defineFunctionalComponent({
             iconElement =
                 ComponentHelper.createIconElement(
                     icon,
-                    'fk-button-icon fk-icon fk-' + iconPosition),
+                    'sc-button-icon sc-icon sc-' + iconPosition,
+                    props.posotion === 'left' ? null : { margin: '0 0 5px 0'}),
 
             type = props.type,
 
             text = Strings.trimToNull(props.text),
 
+            textElementInner =
+                props.type === 'link'
+                    ? h('a', text)
+                    : text,
+
             textElement =
                 text === null
                     ? null
-                    : h('span.fk-button-text',
-                        text),
+                    : (props.iconPosition === 'left'
+                        ? h('span', textElementInner)
+                        : h('div', textElementInner)),
 
             tooltip = props.tooltip, // TODO
 
@@ -116,15 +128,16 @@ export default defineFunctionalComponent({
                     ? h('span', {className: 'caret'})
                     : null,
 
-            sizeClass = { large: 'btn-lg', small: 'btn-sm'}[props.size] || null,
+            sizeClass = props.size,
 
             className =
                 ComponentHelper.buildCssClass(
-                    'btn btn-' + type,
+                    `ui button ${type} sc-Button--${type}`,
                     sizeClass,
-                    (text === null ? null : 'fk-has-text'),
-                    (iconElement === null ? null : 'fk-has-icon'),
-                    (!isDropdown ? null : 'dropdown-toggle')),
+                    (text === null ? null : 'sc-has-text'),
+                    (iconElement === null ? null : 'sc-has-icon'),
+                    (!isDropdown ? null : 'dropdown-toggle'),
+                    (props.outlined ? 'basic' : null)),
 
             doOnClick = () => {
                 const onClick = props.onClick;
@@ -153,7 +166,7 @@ export default defineFunctionalComponent({
 
         if (isDropdown) {
             ret =
-                h('div.fk-button.btn-group',
+                h('div.sc-button.btn-group',
                     {   className: props.className
                     },
                     button,
@@ -167,7 +180,7 @@ export default defineFunctionalComponent({
 
         } else if (isSplitButton) {
             ret =
-                h('div.fk-button.btn-group.dropdown',
+                h('div.sc-button.btn-group.dropdown',
                     {className: props.className},
                     button,
                     h('button.btn.dropdown-toggle.dropdown-toggle-split',
@@ -186,7 +199,7 @@ export default defineFunctionalComponent({
                             'Juhu2')));
         } else {
             ret =
-                h('div.fk-button.btn-group',
+                h('div.sc-button.btn-group',
                     { className: props.className },
                     button);
         }
