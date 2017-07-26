@@ -12,7 +12,7 @@ export default defineClassComponent({
     render() {
         return (
             h('div',
-                SceneOfButtons())
+                SceneOfDataTables())
         );
     }
 });

@@ -18,7 +18,7 @@ export default class DataTableHelper {
                 { text: 'Delete' }
             ],
 
-            hasActions: true,
+            hasActions: false,
             
             data
         };

@@ -74,11 +74,17 @@ export default defineFunctionalComponent({
             break;
         
         case 'info-about-page':
-            ret = h('div.item', buildInfoTextAboutPage(facts));
+            ret =
+                h('div.item',
+                     buildInfoTextAboutPage(facts));
             break;
 
         case 'info-about-records':
-            ret = h('div.item', buildInfoTextAboutRecords(facts));
+            ret =
+                h('div',
+                    { className },
+                    buildInfoTextAboutRecords(facts));
+            
             break;
 
         default:

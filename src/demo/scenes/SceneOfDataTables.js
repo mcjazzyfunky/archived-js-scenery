@@ -14,24 +14,27 @@ const
                     columns: [
                         { title: 'First name',
                             field: 'firstName',
-                            align: 'center'
+                            align: 'left'
                         },
                         { title: 'Last name',
                             field: 'lastName',
-                            align: 'right'
+                            align: 'left'
                         }
                     ]
                 },
                 { title: 'Adress',
                     columns: [
                         { title: 'Street',
-                            field: 'street'
+                            field: 'street',
+                            align: 'left'
                         },
                         { title: 'Postal code',
-                            field: 'postalCode'
+                            field: 'postalCode',
+                            align: 'left'
                         },
                         { title: 'City',
-                            field: 'city'
+                            field: 'city',
+                            align: 'left'
                         }
                     ]
                 }
@@ -70,61 +73,31 @@ const data = [
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',
+        postalCode: '78222',
         city: 'Towny Town'
     },
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',
+        postalCode: '78222',
         city: 'Towny Town'
     },
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',
+        postalCode: '78222',
         city: 'Towny Town'
     },
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',
+        postalCode: '78222',
         city: 'Towny Town'
     },
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',
-        city: 'Towny Town'
-    },
-    { firstName: 'Jane',
-        lastName: 'Doe',
-        street: 'Main Street 123',
-        city: 'Towny Town'
-    },
-    { firstName: 'Jane',
-        lastName: 'Doe',
-        street: 'Main Street 123',
-        city: 'Towny Town'
-    },
-    { firstName: 'Jane',
-        lastName: 'Doe',
-        street: 'Main Street 123',
-        city: 'Towny Town'
-    },
-    { firstName: 'Jane',
-        lastName: 'Doe',
-        street: 'Main Street 123',
-        city: 'Towny Town'
-    },
-    { firstName: 'Jane',
-        lastName: 'Doe',
-        street: 'Main Street 123',
-        city: 'Towny Town'
-    },
-    { firstName: 'Jane',
-        lastName: 'Doe',
-        street: 'Main Street 123',
-        city: 'Towny Town'
-    },
-    { firstName: 'John',
-        lastName: 'Doe',
-        street: 'Main Street 123',
+        postalCode: '78222',
         city: 'Towny Town'
     }];
 

@@ -46,6 +46,35 @@
   DataNavigator 
  --------------------------*/
 
- .sc-DataNavigator-Pagination {
-     border: 2px solid red;
- }
+.sc-DataNavigator-header {
+    margin: 0 0 6px 0 !important;
+}
+
+.sc-DataNavigator-header * {
+    font-size: 12px;
+    white-space: nowrap !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+
+.sc-DataNavigator table th {
+    padding: 3px !important;
+}
+
+.sc-DataNavigator table tr {
+    font-size: 13px !important;
+}
+
+.sc-DataNavigator .segment {
+    margin: 3px 0 0 0;
+    padding: 1px 10px 1px 2px;
+}
+
+.sc-DataNavigator .segment :not(i) {
+    font-size: 12px !important;
+}
+
+.sc-DataNavigator .segment input[type=text] {
+    padding: 3px !important;
+}

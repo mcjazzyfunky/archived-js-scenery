@@ -91,7 +91,7 @@ export default defineFunctionalComponent({
                 ComponentHelper.createIconElement(
                     icon,
                     'sc-button-icon sc-icon sc-' + iconPosition,
-                    props.posotion === 'left' ? null : { margin: '0 0 5px 0'}),
+                    props.iconPosition === 'left' ? null : { margin: '0 0 5px 0'}),
 
             type = props.type,
 
