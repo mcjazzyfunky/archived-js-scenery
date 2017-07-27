@@ -8,8 +8,6 @@ import {
 import { Seq } from 'js-essential';
 import { Spec } from 'js-spec';
 
-const style = null; //{ backgroundColor: 'rgb(249, 250, 251)', borderStyle: 'solid', borderWidth: '1px 1px 0 0', borderColor: 'rgba(34, 36, 38, 0.1)' };
-
 const tableConfigSpec =
     Spec.shape({
         columns:
@@ -59,16 +57,7 @@ export default defineClassComponent({
             metrics = DataTableHelper.buildTableMetrics(config, data);
        
         return (
-            h('div > table.ui.celled.compact.striped.table',
-                h('colgroup',
-                    h('col', { style: { width: '20px' } }),
-                    h('col', { style: { width: '20px' } }),
-                    h('col'),
-                    h('col'),
-                    h('col'),
-                    h('col'),
-                    h('col'),
-                    h('col', { style: { width: '20px' } })),
+            h('.sc-DataTable > table',
                 createTableHeader(metrics),
                 createTableBody(metrics))
         );
@@ -96,25 +85,26 @@ function createTableHeaderRow(headerRow, idx, metrics) {
 
     if (metrics.showRecordNumbers) {
         if (idx === 0 && numHeaderRows > 1) {
-            addits.push(h('th', { rowSpan: numHeaderRows - 1, style }));
+            addits.push(
+                h('th',
+                    { rowSpan: numHeaderRows - 1 }));
         } else {
-            addits.push(h('th.center.aligned', { style }, ''));
+            addits.push(h('th', ''));
         }
     }
 
     if (metrics.selectionMode !== 'none') {
         if (idx === 0 && numHeaderRows > 1) {
-            addits.push(h('th', { rowSpan: numHeaderRows - 1, style }));
+            addits.push(h('th', { rowSpan: numHeaderRows - 1 }));
         } else if (metrics.selectionMode === 'multi') {
             addits.push(
-                h('th.center.aligned',
-                    { style },
-                    h('div.ui.checkbox',
-                        h('input[type=checkbox]'),
-                        h('label', { style: { position: 'absolute' } }))));
+                h('th',
+                    h('div',
+                        h('input[type=checkbox].k-checkbox'),
+                        h('label.k-checkbox-label'))));
         } else {
             addits.push(
-                h('th', { style }));
+                h('th'));
         }
     }
 
@@ -122,7 +112,7 @@ function createTableHeaderRow(headerRow, idx, metrics) {
         if (idx === 0 && numHeaderRows > 1) {
             tailExtra = h('th', { rowSpan: numHeaderRows - 1 });
         } else {
-            tailExtra = h('th.center.aligned', '');
+            tailExtra = h('th', '');
         }
     }
 
@@ -139,7 +129,7 @@ function createTableHeaderRow(headerRow, idx, metrics) {
 function createTableHeaderCell(cell) {
     return (
         h('th',
-            { className: `${cell.align} aligned`,
+            { className: null,
                 colSpan: cell.colspan,
                 rowSpan: cell.rowspan 
             },
@@ -163,31 +153,29 @@ function createTableBodyRow(rec, idx, metrics) {
     
     if (metrics.showRecordNumbers) {
         addits.push(
-            h('td.center.aligned > i',
+            h('td',
                 metrics.offsetRecordNumbers + idx + 1));
     }
 
     if (metrics.selectionMode === 'multi') {
         addits.push(
-            h('td.center.aligned',
-                { style }, 
-                h('div.ui.checkbox',
-                    h('input[type=checkbox]'),
-                    h('label', { style: { position: 'absolute' } }))));
+            h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned',
+                h('input[type=checkbox].k-checkbox'),
+                h('label.k-checkbox-label', '')));
     } else if (metrics.selectionMode === 'single') {
         addits.push(
-            h('td.center.aligned',
-                { style },
+            h('td',
                 h('input[type=radio].ui.radio')));
     }
 
     if (metrics.hasActions) {
-        tailExtra = h('td.center.aligned',
+        tailExtra = h('td',
             createActionButtonGroup(rec, metrics));
     }
 
     return (
         h('tr',
+            { className: idx % 2 === 0 ? null : 'sc-DataTable-bodyRow--alt'},
             addits,
             Seq.from(metrics.columns)
                 .map(column =>
@@ -199,13 +187,12 @@ function createTableBodyRow(rec, idx, metrics) {
 function createTableBodyCell(column, rec) {
     return (
         h('td',
-            { className: `${column.align} aligned`},
             rec[column.field])
     );
 }
 
 function createActionButtonGroup(rec, metrics) {
-    return h('div.ui.secondary.menu.icon',
+    return h('div',
         h('div.item.icon', h('i.icon.edit.outline')),
         h('div.item.icon', h('i.icon.trash.outline')));
 }
