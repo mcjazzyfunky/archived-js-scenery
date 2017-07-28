@@ -6,65 +6,107 @@ import {
 import { Spec }
     from 'js-spec';
 
+import { Seq }
+    from 'js-essential';
+
 import DataTable from './DataTable';
 import Pagination from './Pagination';
 import Button from './Button';
 
+import ComponentHelper from '../helper/ComponentHelper';
+
+const
+    actionSpec =
+        Spec.or(
+            Spec.shape({
+                type: Spec.oneOf('general', 'single-row', 'multi-row'),
+                text: Spec.string,
+                icon: Spec.optional(Spec.string),
+                callback: Spec.function,
+                ignore: Spec.optional(Spec.boolean)
+            }),
+            Spec.shape({
+                type: Spec.is('menu'),
+                text: Spec.string,
+                actions: Spec.lazy(() => actionSpec),
+                ignore: Spec.optional(Spec.boolean)                
+            })
+        ),    
+
+    dataNavSpec = Spec.shape({
+        actions: actionSpec,
+        columns: Spec.array
+    });
+
 export default defineClassComponent({
     displayName: 'DataNaviagator',
 
-    properties: ['config', 'data'],
+    properties: {
+        config: {
+            constraint: dataNavSpec
+        },
+
+        data: {
+
+        }
+    },
+
+    onRef(ref) {
+        if (ref) {
+            jQuery(ref).find('.sc-DataNavigator-toolbar').kendoMenu();
+        }
+    },
 
     render() {
         const
             config = this.props.config,
             data = this.props.data,
-            header = createHeader(),
+            toolbar = createToolbar(config),
             footer = createFooter();
 
         return h('div.sc-DataNavigator',
-            header,
+            { ref: this.onRef },
+            toolbar,
             DataTable({ config, data }),
             footer
         );
     } 
 });
 
-function createHeader() {
-    const
-        paginator =
-            Pagination({
-                mode: 'advanced-paginator',
-                pageIndex: 1,
-                totalItemCount: 1243,
-                pageSize: 25
-            }),
+function createToolbar(config) {
+    const actionElements = createActionElements(config.actions);
 
-        pageSizeSelector =
-            Pagination({
-                mode: 'page-size-selector',
-                pageIndex: 1,
-                totalItemCount: 1243,
-                pageSize: 25
-            });
+    return h('div > ul.sc-DataNavigator-toolbar.k-widget.k-reset.k-header.k-menu.k-menu-horizontal',
+        actionElements);
+}
 
-    return (
-        /*
-        h('div.sc-DataNavigator-headerxxx.ui.grid > div.row',
-            h('div.ui.stretched.column > div.ui.secondary.menu',
-                h('div.item', h('i.icon.plus'), 'New'),
-                h('div.item', h('i.icon.edit'), 'Edit'),
-                h('div.item', h('i.icon.delete'), 'Delete'),
-                h('div.item', h('i.icon.print'), 'Print')),
-            h('div.ui.column', paginator),
-            h('div.ui.column', pageSizeSelector)
-        */
-        h('div.ui.menu',
-            h('div.ui.item.left.floated', h('div.ui.fluid', 'Cell 1')),
-            h('div.ui.item.right.floated', { style: { whiteSpace: 'nowrap'} }, "Cell 2 sddddddd sdds"),
-            h('div.ui.item.right.floated', 'Cell3')
-        )
-    );
+function createActionElements(actions, level = 0) {
+    const ret = Seq.from(actions).map(action => {
+        const type = action.type;
+
+        let item;
+
+        if (type !== 'menu') {
+            const { type, text, icon, callback } = action;
+
+            item = h('li.k-item.k-state-default > span.k-link',
+                ComponentHelper.createIconElement(icon),    
+                text);
+        } else {
+            const { text, actions } = action;
+
+            item =
+                h('li.k-item',
+                    h('span.k-link', text),
+                    h('ul',
+                        { style: { display: 'none' } },
+                        createActionElements(actions, level + 1)));
+        }
+
+        return item;
+    });
+
+    return ret;
 }
 
 function createFooter() {
@@ -74,7 +116,7 @@ function createFooter() {
                 pageIndex: 2,
                 pageSize: 50,
                 totalItemCount: 1000,
-                mode: 'info-about-records',
+                mode: 'advanced-paginator',
                 className: 'sc-DataNavigator-Pagination item right floated'
             }))
     );

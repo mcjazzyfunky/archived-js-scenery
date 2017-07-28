@@ -2,7 +2,7 @@ import { Strings } from 'js-essential';
 import { createElement as h } from 'js-surface';
 
 export default class ComponentHelper {
-    static buildCssClass(...tokens) {
+    static buildClass(...tokens) {
         let ret = '';
 
         for (let token of tokens) {
@@ -14,7 +14,7 @@ export default class ComponentHelper {
                 ret += token;
             } else if (token instanceof Array) {
                 for (let subtoken of token) {
-                    let subCssClass = ComponentHelper.buildCssClass(subtoken);
+                    let subCssClass = ComponentHelper.buildClass(subtoken);
 
                     if (ret.length > 0) {
                         ret += ' ';
@@ -28,14 +28,14 @@ export default class ComponentHelper {
         return ret;
     }
 
-    static buildIconCssClass(icon) {
+    static buildIconClass(icon) {
         let ret = '';
 
-        if (icon && typeof icon === 'string' && icon.indexOf('.') === -1) {
-            let match = icon.match(/(?:^|\s)(fa)-./);
-
-            if (match) {
-                ret = match[1] + ' ' + icon;
+        if (icon && typeof icon === 'string') {
+            if (icon.startsWith('k-')) {
+                ret = `k-icon k-i-${icon.substr(2)}`;
+            } else if (icon.startsWith('fa-')) {
+                ret = `fa ${icon}`;
             }
         }
 
@@ -46,12 +46,17 @@ export default class ComponentHelper {
         let ret = null;
 
         icon = Strings.trimToNull(icon);
-        className = ComponentHelper.buildCssClass(className);
+        className = ComponentHelper.buildClass(className);
 
         if (icon !== null) {
             if (icon.startsWith('fa-')) {
                 const fullClassName =
-                    className + ' ui icon ' + icon.substr(3).replace('-', ' ');
+                    `${className} ${ComponentHelper.buildIconClass(icon)}`;
+
+                ret = h('i', { className: fullClassName, style });
+            } else if (icon.startsWith('k-')) {
+                const fullClassName =
+                    `k-icon ${className} ${ComponentHelper.buildIconClass(icon)}`;
 
                 ret = h('i', { className: fullClassName, style });
             } else {

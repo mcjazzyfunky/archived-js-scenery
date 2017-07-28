@@ -131,7 +131,7 @@ export default defineFunctionalComponent({
             sizeClass = props.size,
 
             className =
-                ComponentHelper.buildCssClass(
+                ComponentHelper.buildClass(
                     `ui button ${type} sc-Button--${type}`,
                     sizeClass,
                     (text === null ? null : 'sc-has-text'),

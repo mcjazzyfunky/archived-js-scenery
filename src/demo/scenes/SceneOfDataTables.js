@@ -9,6 +9,41 @@ import DataNavigator from '../../main/js/api/component/DataNavigator';
 const
     config =
         {
+            actions: [
+                { type: 'general',
+                    text: 'New',
+                    icon: 'k-plus'
+                },
+                { type: 'single-row',
+                    text: 'View',
+                    icon: 'k-file-txt'
+                },
+                { type: 'single-row',
+                    text: 'Delete',
+                    icon: 'k-delete'
+                },
+                { type: 'menu',
+                    text: 'Export',
+
+                    actions: [
+                        { type: 'menu',
+                            text: 'Export to CSV',
+                            actions: [
+                                { type: 'multi-row',
+                                    text: 'Comma separated'
+                                },
+                                { type: 'multi-row',
+                                    text: 'Tab separated'    
+                                }
+                            ]
+                        },
+                        { type: 'multi-row',
+                            text: 'Export to Excel'
+                        }
+                    ]
+                }
+            ],
+
             columns: [
                 { title: 'Name',
                     columns: [
