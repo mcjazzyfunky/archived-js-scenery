@@ -1,29 +1,33 @@
 import ComponentHelper from '../helper/ComponentHelper';
 
-import { defineFunctionalComponent, createElement as h } from 'js-surface';
+import { defineClassComponent, createElement as h } from 'js-surface';
 import { Seq } from 'js-essential';
 import { Spec } from 'js-spec';
+import jQuery from 'jquery';
 
-export default defineFunctionalComponent({
+export default defineClassComponent({
     displayName: 'Pagination',
 
     properties: {
         pageIndex: {
             type: Number,
             constraint: Spec.nonnegativeInteger,
-            nullable: true
+            nullable: true,
+            defaultValue: null
         },
 
         pageSize: {
             type: Number,
             constraint: Spec.nonnegativeInteger, 
-            nullable: true
+            nullable: true,
+            defaultValue: null
         },
         
         totalItemCount: {
             type: Number,
             constraint: Spec.nonnegativeInteger,
-            nullable: true
+            nullable: true,
+            defaultValue: null
         },
 
         mode: {
@@ -35,7 +39,7 @@ export default defineFunctionalComponent({
                     'advanced-paginator',
                     'page-size-selector',
                     'info-about-page',
-                    'info-about-records'),
+                    'info-about-items'),
          
             defaultValue:
                 'standard-paginator' 
@@ -48,7 +52,25 @@ export default defineFunctionalComponent({
         }
     },
 
-    render({ pageIndex, pageSize, totalItemCount, className, mode}) {
+    constructor() {
+        this._domElem = null;
+    },
+
+    onDidMount() {
+        if (this._domElem) {
+            const $select = jQuery(this._domElem).find('select');
+           
+            $select.css('width', ($select.width() + 20) + 'px');
+            
+            $select.kendoDropDownList({
+                autoWidth: true
+            });
+        }
+    },
+
+    render() {
+        const { pageIndex, pageSize, totalItemCount, className, mode} = this.props;
+
         let ret = null;
         
         const
@@ -70,7 +92,7 @@ export default defineFunctionalComponent({
             break;
 
         case 'page-size-selector':
-            ret = createPageSizeSelector(facts);
+            ret = createPageSizeSelector(facts, elem => this.setDomElem(elem));
             break;
         
         case 'info-about-page':
@@ -79,11 +101,11 @@ export default defineFunctionalComponent({
                      buildInfoTextAboutPage(facts));
             break;
 
-        case 'info-about-records':
+        case 'info-about-items':
             ret =
                 h('div',
                     { className },
-                    buildInfoTextAboutRecords(facts));
+                    buildInfoTextAboutItems(facts));
             
             break;
 
@@ -93,6 +115,10 @@ export default defineFunctionalComponent({
         }
 
         return ret;
+    },
+
+    setDomElem(elem) {
+        this._domElem = elem;
     }
 });
 
@@ -211,23 +237,19 @@ function buildInfoTextAboutPage({ pageIndex, pageCount, valid }) {
         : null;
 }
 
-function createPageSizeSelector({ pageSize }) {
+function createPageSizeSelector({ pageSize }, onRef ) {
+    const sizes = [10, 25, 50, 100, 250, 500];
+
     return (
-        h('div.ui.secondary.menu',
-            h('label.item', 'Items/Page:'), 
-            h('div.item.ui.inline.dropdown',
-                h('div.text', '25'),
-                h('i.dropdown.icon'),
-                h('div.ui.secondary.menu',
-                    h('div.item', 10),
-                    h('div.item', 25),
-                    h('div.item', 50),
-                    h('div.item', 100),
-                    h('div.item', 250))))
+        h('div.sc-Pagination',
+            { ref: onRef },
+            'Items/page:',
+            h('select',
+                Seq.from(sizes).map(size => h('option', size))))
     );
 }
 
-function buildInfoTextAboutRecords({ pageIndex, pageSize, totalItemCount, valid }) {
+function buildInfoTextAboutItems({ pageIndex, pageSize, totalItemCount, valid }) {
     let infoText = null;
     
     if (valid) {
@@ -263,24 +285,24 @@ function createFirstPageButton(facts, text) {
         children =
             isNumericText
                 ? text
-                : h('i.angle.double.left.icon.large');
+                : h('span.k-icon.k-i-arrow-end-left');
 
     return (
-        h('button.ui.item.icon.button', children)
+        h('button.k-button', children)
     );
 }
 
 function createPreviousPageButton(facts) {
     return (
-        h('button.item.ui.icon.button',
-            h('i.angle.left.icon.large'))
+        h('button.k-button',
+            h('span.k-icon.k-i-arrow-60-left'))
     );
 }
 
 function createNextPageButton(facts) {
     return (
-        h('button.item.ui.icon.button',
-            h('i.angle.right.icon.large'))
+        h('button.k-button',
+            h('span.k-icon.k-i-arrow-60-right'))
     );
 }
 
@@ -290,10 +312,10 @@ function createLastPageButton(facts, text = null) {
         children =
             isNumericText
                 ? text
-                : h('i.angle.double.right.icon.large');
+                : h('span.k-icon.k-i-arrow-end-right');
 
     return (
-        h('button.item.ui.icon.button',
+        h('button.k-button',
             children)
     );
 }

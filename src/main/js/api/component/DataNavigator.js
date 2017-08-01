@@ -69,105 +69,74 @@ export default defineClassComponent({
             { ref: this.onRef },
             toolbar,
             DataTable({ config, data }),
-            footer,
-            Menu({
-                items: [
-                    {
-                        text: 'Menu1'
-                    },
-                    {
-                        text: 'Menu2'
-                    },
-                    {
-                        text: 'Menu3',
-                        items: [
-                            {
-                                text: 'Sub item1',
-                                items: [
-                                    {
-                                        text: 'Sub sub item 1'
-                                    },
-                                    {
-                                        text: 'Sub sub item 2'
-                                    }
-                                ]
-                            },
-                            {
-                                text: 'Sub item2'
-                            }
-
-                        ]
-                    }
-                ]
-            })
+            footer
         );
     } 
 });
 
 function createToolbar(config) {
-    // const actionElements = createActionElements(config.actions);
+    const actionMenus = createActionMenus(config.actions);
 
-    //return h('div > ul.sc-DataNavigator-toolbar.k-widget.k-reset.k-header.k-menu.k-menu-horizontal',
-    //    actionElements);
-
-    return h('div',
-        Seq.from(config.actions).map(createMenu));
+    return (
+        h('div.sc-DataNavigator-toolbar',
+            actionMenus,
+            createPaginator(config),
+            createPageSizeSelector(config))
+    ); 
 }
 
-function createActionElements(actions, level = 0) {
-    const ret = Seq.from(actions).map(action => {
-        const type = action.type;
+function createActionMenus(actions) {
+    const ret = [];
 
-        let item;
+    for (const action of actions) {
+        const items = [{ text: action.text, icon: action.icon }];
 
-        if (type !== 'menu') {
-            const { type, text, icon, callback } = action;
-
-            item = h('li.k-item.k-state-default > span.k-link',
-                ComponentHelper.createIconElement(icon),    
-                text);
-        } else {
-            const { text, actions } = action;
-
-            item =
-                h('li.k-item',
-                    h('span.k-link', text),
-                    h('ul',
-                        { style: { display: 'none' } },
-                        createActionElements(actions, level + 1)));
-        }
-
-        return item;
-    });
+        ret.push(Menu({ items }));
+    }
 
     return ret;
 }
 
-function createMenu(config) {
-    const { type, text, icon, callback, actions } = config;
+function createPaginator(config) {
+    return h('div.sc-DataNavigator-paginator',
+        Pagination({
+            mode: 'advanced-paginator',
+            pageIndex: 1,
+            pageSize: 25,
+            totalItemCount: 1225
+        }));
+}
 
+function createPageSizeSelector(config) {
+    return h('div.sc-DataNavigator-pageSizeSelector',
+        Pagination({
+            mode: 'page-size-selector',
+            pageSize: 25
+        }));
 
-    return h('span > ul.sc-DataNavigator-toolbarMenu.k-widget.k-reset.k-header.k-menu.k-menu-horizontal',
-        { style: { display: 'inline-block' }},    
-        h('li.k-item',    
-            ComponentHelper.createIconElement(icon),    
-            text,
-            !actions
-                ? null
-                : h('ul.k-widget.k-reset.k-menu',
-                    { style: { display: 'none' } },
-                    createActionElements(actions))));
+    return h('div.sc-DataNavigator-pageSizeSelector',
+        'Items/page:',
+        Menu({
+            items: [{
+                text: `10`,
+                
+                items: 
+                    Seq.of(10, 25, 50, 100, 250, 500).map(n => ({
+                        text: n
+                    })).toArray()
+            }]
+        })
+    );
 }
 
 function createFooter() {
     return (
-        h('div.ui.items',
+        h('div.sc-DataNavigator-footer',
             Pagination({
-                pageIndex: 2,
-                pageSize: 50,
-                totalItemCount: 1000,
-                mode: 'advanced-paginator',
-                className: 'sc-DataNavigator-Pagination item right floated'
+                mode: 'info-about-items',
+                pageIndex: 0,
+                pageSize: 25,
+                totalItemCount: 1225
             }))
     );
 }

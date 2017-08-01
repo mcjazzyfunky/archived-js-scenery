@@ -103,6 +103,39 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
 /*--------------------------
   DataNavigator 
  --------------------------*/
+
+
+.sc-DataNavigator-toolbar {
+    padding: 0;
+    background-color: #f5f5f5;
+    margin-bottom: 10px;
+    border: 1px solid #dbdbdb;
+    border-radius: 2px;
+}
+
+.sc-DataNavigator-toolbar .sc-Menu {
+    display: inline-block;
+}
+
+.sc-DataNavigator-toolbar .sc-Menu > ul {
+    border: none;
+}
+
+.sc-DataNavigator-pageSizeSelector {
+    float: right;
+    vertical-align: text-top;
+}
+
+.sc-DataNavigator-paginator {
+    float: right;
+    vertical-align: text-top;
+}
+
+.sc-DataNavigator-footer {
+    text-align: right;
+    padding: 0.8em;
+}
+
 /*
 .sc-DataNavigator-header {
     margin: 0 0 6px 0 !important;

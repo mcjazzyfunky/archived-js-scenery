@@ -6,7 +6,7 @@ import {
 import { Spec } from 'js-spec';
 import { Seq } from 'js-essential';
 import jQuery from 'jquery';
-import { ComponentHelper } from '../helper/ComponentHelper';
+import ComponentHelper from '../helper/ComponentHelper';
 
 const menuItemSpec = Spec.or(
     Spec.shape({
@@ -19,6 +19,7 @@ const menuItemSpec = Spec.or(
     Spec.shape({
         text: Spec.string,
         icon: Spec.optional(Spec.string),
+        className: Spec.optional(Spec.string),
         items:
             Spec.optional(
                 Spec.arrayOf(
@@ -60,15 +61,18 @@ export default defineClassComponent({
     },
 
     render() {
-        return h('div > ul.sc-DataNavigator-toolbarMenu.k-widget.k-reset.k-header.k-menu.k-menu-horizontal',
-            { ref: ref => this.setNodeRef(ref) },    
+        return h('div.sc-Menu > ul.k-widget.k-reset.k-header.k-menu.k-menu-horizontal',
+            {
+                className: this.props.className,
+                ref: ref => this.setNodeRef(ref),
+            },    
             createItems(this.props.items));
     }
 });
 
 function createItems(items, level = 0) {
     const ret = Seq.from(items).map(item => {
-        let subMenu = null;
+        let subMenu = null, icon = null;
       
         if (item.items) {
             subMenu = h('ul',
@@ -76,9 +80,15 @@ function createItems(items, level = 0) {
                 createItems(item.items, level + 1));
         }
 
+        if (item.icon) {
+            icon = ComponentHelper.createIconElement(item.icon);
+        }
+
         return (
             h('li.k-item[role=menuitem]',
+                { className: item.disabled ? 'k-state-disabled' : null },
                 h('span.k-link',
+                    icon,
                     item.text,
                     item.items && level === 0
                         ? h('span.k-icon.k-i-arrow-60-down')
