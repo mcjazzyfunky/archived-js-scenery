@@ -12,6 +12,14 @@ System.config({
         '*.js': {
             presets: ['es2017']
         },
+        'node_modules/jquery/dist/jquery.js': {
+            format: 'global',
+            exports: 'jQuery'
+        },
+        './3rd-party/kendo-ui/kendo.all.min.js': {
+            format: 'global',
+            deps: ['jquery']
+        },
         '../../node_modules/bootstrap/dist/js/bootstrap.js': {
             format: 'global',
             deps: ['jquery'],

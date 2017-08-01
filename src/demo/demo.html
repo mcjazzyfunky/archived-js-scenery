@@ -5,98 +5,21 @@
         <title>js-scenery demo application</title>
         <script type="text/javascript" src="../../node_modules/systemjs/dist/system.js"></script>
         <script type="text/javascript" src="./system-config.js"></script>
-        <script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script>
-
+        <!-- script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script -->
+<!--
         <script type="text/javascript" src="../../semantic/dist/semantic.js"></script>
-        <script type="text/javascript" src="http://kendo.cdn.telerik.com/2017.2.621/js/kendo.all.min.js"></script>
         <link rel="stylesheet" href="../../semantic/dist/semantic.css">
-        
+   -->     
         <link rel="stylesheet" href="../../node_modules/kendo-ui-core/css/web/kendo.common.core.min.css">
         <link rel="stylesheet" href="../../node_modules/kendo-ui-core/css/web/kendo.bootstrap.min.css">
         <link rel="stylesheet" href="../../src/main/css/js-scenery.css">
     </head>
-    <body style="margin: 10px">
-        <div id="megaStore">
-            <ul id="menu">
-                <li>
-                    <span class="k-icon k-i-plus"></span>
-                    New
-                </li>
-                <li>
-                    <span class="k-icon k-i-file-txt"></span>
-                    View 
-                </li>
-                <li>
-                    <span class="k-icon k-i-track-changes-enable"></span>
-                    Edit                    
-                </li>
-                <li>
-                    <span class="k-icon k-i-delete"></span>
-                    Delete
-                </li>
-                <li>
-                    Export
-                    <ul>
-                        <li>
-                            Furniture
-                            <ul>
-                                <li>Tables & Chairs</li>
-                                <li>Sofas</li>
-                                <li>Occasional Furniture</li>
-                                <li>Children's Furniture</li>
-                                <li>Beds</li>
-                            </ul>
-
-
-                        </li>
-                        <li>
-                            Decor
-                            <ul>
-                                <li>Bed Linen</li>
-                                <li>Throws</li>
-                                <li>Curtains & Blinds</li>
-                                <li>Rugs</li>
-                                <li>Carpets</li>
-                            </ul>
-                        </li>
-                        <li>
-                            Storage
-                            <ul>
-                                <li>Wall Shelving</li>
-                                <li>Kids Storage</li>
-                                <li>Baskets</li>
-                                <li>Multimedia Storage</li>
-                                <li>Floor Shelving</li>
-                                <li>Toilet Roll Holders</li>
-                                <li>Storage Jars</li>
-                                <li>Drawers</li>
-                                <li>Boxes</li>
-                            </ul>
-
-                        </li>
-                        <li>
-                            Lights
-                            <ul>
-                                <li>Ceiling</li>
-                                <li>Table</li>
-                                <li>Floor</li>
-                                <li>Shades</li>
-                                <li>Wall Lights</li>
-                                <li>Spotlights</li>
-                                <li>Push Light</li>
-                                <li>String Lights</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            </div>
-        <div id="main-content"></div>
-    <script type="text/javascript">
-        System.import('./demo.js');
-
-          $(document).ready(function() {
-                $("#menu").kendoMenu();
-            });
-    </script>
+    <body>
+        <div id="main-content">
+        </div>
+        <script type="text/javascript">
+            System.import('./3rd-party/kendo-ui/kendo.all.min.js')
+            System.import('./demo.js');
+        </script>
+    </body>
 </html>
