@@ -3,6 +3,37 @@ import {
     defineClassComponent
 } from 'js-surface';
 
+
+import React from 'react';
+
+console.log(React)
+
+const start = Date.now();
+
+for (let i = 0; i < 100000; ++i) {
+    let x = React.createElement('div',
+        { class: 'my-class', id: 'my-id' },
+        React.createElement('div', { class: 'my-class2', id: 'my-id2'}, 'my-div'));    
+}
+
+const end = Date.now();
+
+
+console.log('Duration:', (end - start) / 1000);
+
+const start2 = Date.now();
+const h2 = (...args) => React.createElement(...args);
+for (let i = 0; i < 100000; ++i) {
+//    let x = h('div.my-class#my-id > div.my-class2#my-id2', 'my-div');
+    let x = h('div',
+        { className: 'my-class', id: 'my-id' },
+        h('div', { className: 'my-class2', id: 'my-id2'}, 'my-div'));    
+}
+
+const end2 = Date.now();
+
+console.log('Duration2:', (end2 - start2) / 1000);
+
 import { Spec }
     from 'js-spec';
 
@@ -36,7 +67,8 @@ const
 
     dataNavSpec = Spec.shape({
         actions: actionSpec,
-        columns: Spec.array
+        columns: Spec.array,
+        headline: Spec.optional(Spec.string)
     });
 
 export default defineClassComponent({
@@ -75,13 +107,18 @@ export default defineClassComponent({
 });
 
 function createToolbar(config) {
-    const actionMenus = createActionMenus(config.actions);
+    const
+        actionMenus = createActionMenus(config.actions),
+
+        headline = config.headline
+            ? h('h4.sc-DataNavigator-headline', config.headline)
+            : null;
 
     return (
         h('div.sc-DataNavigator-toolbar',
-            actionMenus,
-            createPaginator(config),
-            createPageSizeSelector(config))
+            headline,
+            h('div.sc-DataNavigator-actions',
+                actionMenus))
     ); 
 }
 
@@ -89,9 +126,30 @@ function createActionMenus(actions) {
     const ret = [];
 
     for (const action of actions) {
-        const items = [{ text: action.text, icon: action.icon }];
+        const
+            menuConfig = { text: action.text, icon: action.icon },
+            items = [menuConfig];
 
-        ret.push(Menu({ items }));
+        if (action.actions) {
+            menuConfig.items = buildActionMenuItems(action.actions);
+        }
+
+        ret.push(h('div.sc-DataNavigator-action', Menu({ items })));
+    }
+
+    return ret;
+}
+
+function buildActionMenuItems(actions) {
+    let ret = null;
+
+    if (actions && actions.length > 0) {
+        ret =
+            Seq.from(actions).map(action => ({
+                text: action.text,
+                icon: action.icon,
+                items: buildActionMenuItems(action.actions) || undefined
+            })).toArray();
     }
 
     return ret;
@@ -108,15 +166,17 @@ function createPaginator(config) {
 }
 
 function createPageSizeSelector(config) {
-    return h('div.sc-DataNavigator-pageSizeSelector',
-        Pagination({
-            mode: 'page-size-selector',
-            pageSize: 25
-        }));
+
+    return Pagination({
+        mode: 'page-size-selector',
+        pageSize: 25
+    });
 
     return h('div.sc-DataNavigator-pageSizeSelector',
-        'Items/page:',
+        h('label.sc-DataNavigator-pageSizeSelectorLabel', 'Items/page:'),
         Menu({
+            //direction: 'top',
+
             items: [{
                 text: `10`,
                 
@@ -129,9 +189,11 @@ function createPageSizeSelector(config) {
     );
 }
 
-function createFooter() {
+function createFooter(config) {
     return (
         h('div.sc-DataNavigator-footer',
+            createPaginator(config),
+            createPageSizeSelector(config),
             Pagination({
                 mode: 'info-about-items',
                 pageIndex: 0,

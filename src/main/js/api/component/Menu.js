@@ -32,7 +32,14 @@ export default defineClassComponent({
 
     properties: {
         items: {
+            type: Array,
             constraint: Spec.arrayOf(menuItemSpec)
+        },
+
+        direction: {
+            type: String,
+            constraint: Spec.oneOf('top', 'bottom'),
+            defaultValue: 'bottom'
         }
     },
 
@@ -45,7 +52,9 @@ export default defineClassComponent({
     },
 
     onDidMount() {
-        jQuery(this._nodeRef).kendoMenu();
+        jQuery(this._nodeRef).kendoMenu({
+            direction: this.props.direction
+        });
     },
 
     onWillUpdate() {
@@ -53,7 +62,9 @@ export default defineClassComponent({
     },
 
     onDidUpdate() {
-        jQuery(this._nodeRef).kendoMenu();
+        jQuery(this._nodeRef).kendoMenu({
+            direction: this.props.direction
+        });
     },
 
     onWillUnmount() {
@@ -91,7 +102,7 @@ function createItems(items, level = 0) {
                     icon,
                     item.text,
                     item.items && level === 0
-                        ? h('span.k-icon.k-i-arrow-60-down')
+                        ? h('span.k-icon.k-i-arrow-60-up')
                         : null
                 ),
                 subMenu)

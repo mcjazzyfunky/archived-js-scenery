@@ -9,6 +9,8 @@ import DataNavigator from '../../main/js/api/component/DataNavigator';
 const
     config =
         {
+            headline: 'Customers',
+
             actions: [
                 { type: 'general',
                     text: 'New',
@@ -29,10 +31,12 @@ const
                         { type: 'menu',
                             text: 'Export to CSV',
                             actions: [
-                                { type: 'multi-row',
+                                {   
+                                    type: 'multi-row',
                                     text: 'Comma separated'
                                 },
-                                { type: 'multi-row',
+                                {
+                                    type: 'multi-row',
                                     text: 'Tab separated'    
                                 }
                             ]
@@ -105,6 +109,12 @@ const config2 = {
 };
 
 const data = [
+    { firstName: 'Jane',
+        lastName: 'Doe',
+        street: 'Main Street 123',
+        postalCode: '78222',
+        city: 'Towny Town'
+    },
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',

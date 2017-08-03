@@ -1,11 +1,11 @@
 import ComponentHelper from '../helper/ComponentHelper';
 
-import { defineClassComponent, createElement as h } from 'js-surface';
+import { defineFunctionalComponent, createElement as h } from 'js-surface';
 import { Seq } from 'js-essential';
 import { Spec } from 'js-spec';
-import jQuery from 'jquery';
+import SelectBox from './SelectBox';
 
-export default defineClassComponent({
+export default defineFunctionalComponent({
     displayName: 'Pagination',
 
     properties: {
@@ -52,25 +52,7 @@ export default defineClassComponent({
         }
     },
 
-    constructor() {
-        this._domElem = null;
-    },
-
-    onDidMount() {
-        if (this._domElem) {
-            const $select = jQuery(this._domElem).find('select');
-           
-            $select.css('width', ($select.width() + 20) + 'px');
-            
-            $select.kendoDropDownList({
-                autoWidth: true
-            });
-        }
-    },
-
-    render() {
-        const { pageIndex, pageSize, totalItemCount, className, mode} = this.props;
-
+    render({ pageIndex, pageSize, totalItemCount, className, mode }) {
         let ret = null;
         
         const
@@ -218,7 +200,7 @@ function createAdvancedPaginator(facts) {
                 h('input[type=text][size=3]'));
 
     return (
-        h('div.sc-Pagination--advanced > table > tbody > tr',
+        h('div.sc-Pagination.sc-Pagination--advanced > table > tbody > tr',
             h('td', firstPageButton),
             h('td', previousPageButton),
             h('td', 'Page'),
@@ -240,12 +222,14 @@ function buildInfoTextAboutPage({ pageIndex, pageCount, valid }) {
 function createPageSizeSelector({ pageSize }, onRef ) {
     const sizes = [10, 25, 50, 100, 250, 500];
 
+
     return (
         h('div.sc-Pagination',
-            { ref: onRef },
             'Items/page:',
-            h('select',
-                Seq.from(sizes).map(size => h('option', size))))
+            SelectBox({
+                value: String(pageSize),
+                options: sizes
+            }))
     );
 }
 

@@ -1,3 +1,9 @@
+body {
+    font-family: Arial;
+    padding: 10px;
+}
+
+
 /*--------------------------
   Button
  --------------------------*/
@@ -104,36 +110,122 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
   DataNavigator 
  --------------------------*/
 
-
 .sc-DataNavigator-toolbar {
     padding: 0;
-    background-color: #f5f5f5;
     margin-bottom: 10px;
-    border: 1px solid #dbdbdb;
+    border: none; 
     border-radius: 2px;
+    background: none;
+    margin-top: 20px;
+    margin-bottom: 1px;
+    position: relative;
 }
 
 .sc-DataNavigator-toolbar .sc-Menu {
     display: inline-block;
+    font-size: 90%;
 }
 
-.sc-DataNavigator-toolbar .sc-Menu > ul {
-    border: none;
+.sc-DataNavigator-toolbar .sc-Menu > ul > li > .k-link {
+    padding: 6px 10px;
+    margin: 0 !important;
+}
+
+
+.sc-DataNavigator-toolbar .sc-Menu > ul > li,
+.sc-DataNavigator-toolbar .sc-Menu > ul,
+.sc-DataNavigator-paginator * {
+    border: none !important;
+}
+
+.sc-DataNavgator-toolbar input[type=text] {
+    border: 1px solid black !important;
+}
+
+.sc-DataNavigator-actions {
+    display: inline-block;
+    position: relative;
+}
+
+.sc-DataNavigator-action {
+    display: inline-block;
+    xmargin-right: 10px;
+}
+
+.sc-DataNavigator-action:before {
+    position: absolute;
+    top: 6px;
+    font-size: 10px;
+    content: '|';
+    color: #ddd;
+}
+
+.sc-DataNavigator-action:first-child:before {
+    content: none
+}
+
+.sc-DataNavigator-headline {
+    font-size: 140%;
+    font-weight: normal;
+    display: inline-block;
+    margin: 0 1em 0 0.5em;
+    vertical-align: top;
 }
 
 .sc-DataNavigator-pageSizeSelector {
-    float: right;
+    float: left;
     vertical-align: text-top;
+    margin-right: 20px;
+}
+
+.sc-DataNavigator-pageSizeSelector:after {
+    position: absolute;
+    top: 6px;
+    font-size: 10px;
+    content: '|';
+    color: #ddd;
+}
+
+.sc-DataNavigator-pageSizeSelectorLabel {
+    position: relative;
+    top: -10px;
+    font-size: 90%;
+}
+
+.sc-DataNavigator-toolbar .sc-Pagination {
+    position: relative;
+    top: -3px;
+}
+
+.sc-DataNavigator-toolbar .sc-Pagination input[type=text] {
+    border: 1px solid #aaa !important;
+    padding: 2px 3px 3px 3px;
+    width: 4em;
 }
 
 .sc-DataNavigator-paginator {
-    float: right;
+    float: left;
     vertical-align: text-top;
 }
 
+.sc-DataNavigator .sc-DataTable {
+    border-top-style: solid;
+    border-top-color: grey;
+    border-top-width: 2px;
+    padding-top: 0px;
+}
+
 .sc-DataNavigator-footer {
+    font-size: 13px;
     text-align: right;
-    padding: 0.8em;
+    margin-top: -1px;
+    padding: 0.1em;
+    padding-right: 0.8em;
+    background-color: #f5f5f5;
+    border: 0 solid #dbdbdb;
+    border-width: 1px 1px 1px 1px;
+    border-top-color: #ddd;
+    height: 32px;
 }
 
 /*
