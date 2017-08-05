@@ -4,6 +4,7 @@ import {
 } from 'js-surface';
 
 import SceneOfButtons from '../scenes/SceneOfButtons';
+import SceneOfFormFields from '../scenes/SceneOfFormFields';
 import SceneOfDataTables from '../scenes/SceneOfDataTables';
 
 export default defineClassComponent({
@@ -12,7 +13,7 @@ export default defineClassComponent({
     render() {
         return (
             h('div',
-                SceneOfDataTables())
+                SceneOfFormFields())
         );
     }
 });

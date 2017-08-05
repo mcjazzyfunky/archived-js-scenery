@@ -12,7 +12,15 @@ export default defineClassComponent({
 
     properties: {
         value: {
-            type: String
+            type: String,
+            nullable: true,
+            defaultValue: null
+        },
+
+        defaultValue: {
+            type: String,
+            nullable: true,
+            defaultValue: null
         },
 
         options: {
@@ -28,7 +36,7 @@ export default defineClassComponent({
                             value: Spec.or(Spec.string, Spec.number),
                             text: Spec.or(Spec.string, Spec.number)
                         }))
-                ),
+                )
         },
 
         disabled: {
@@ -40,62 +48,137 @@ export default defineClassComponent({
             type: String,
             nullable: true,
             defaultValue: null
+        },
+
+        onChange: {
+            type: Function,
+            nullable: true,
+            defaultValue: null
         }
     },
 
-    constructor() {
+    constructor(props) {
+        this._value =
+            this.props.value !== null
+                ? props.value
+                : props.defaultValue;
+            
         this._selectNode = null;
+        this._stringifiedOptions = JSON.stringify(props.options);
+        this._normalizedOptions = this.normalizeOptions(props.options);
+    },
+
+    onWillReceiveProps(nextProps) {
+        if (nextProps.value !== null && this.value !== nextProps.value) {
+            this._value = nextProps.value;
+
+            jQuery(this._selectNode)
+                .data('kendoDropDownList')
+                .value(this._value);
+        }
+
+        if (nextProps.options) {
+            const stringifiedOptions = JSON.stringify(nextProps.options);
+
+            if (this._stringifiedOptions !== stringifiedOptions) {
+                this._stringifiedOptions = stringifiedOptions;
+                this._normalizedOptions = this.normalizeOptions(nextProps.options);
+                
+                jQuery(this._selectNode)
+                    .data('kendoDropDownList')
+                    .setDataSource(this._normalizedOptions);
+            }
+        }
+
+        if (nextProps.disabled != this.props.disabled) {
+            jQuery(this._selectNode)
+                .data('kendoDropDownList')
+                .enable(!nextProps.disabled);
+        }
     },
 
     setSelectNode(node) {
         this._selectNode = node;
     },
 
-    decorateSelectNode() {
+    normalizeOptions(options) {
+        return options.map(option => {
+            const typeOfOption = typeof option;
+
+            return typeOfOption === 'string' || typeOfOption === 'number'
+                ? { value: String(option), text: String(option) }
+                : { value: String(option.value), text: String(option.text) };
+        });
+    },
+
+    kendoify() {
         if (this._selectNode) {
             const $select = jQuery(this._selectNode);
            
             $select.css('width', ($select.width() + 20) + 'px');
 
+            $select.on('change', this.onChange);
+
             $select.kendoDropDownList({
-                autoWidth: true
+                autoWidth: true,
+                dataTextField: 'text',
+                dataValueField: 'value'
             });
         }
     },
 
-    undecorateSelectNode() {
+    unkendoify() {
         if (this._selectNode) {
             jQuery(this._selectNode).data('kendoDropDownList').destroy();
         }
     },
 
+    shouldUpdate() {
+        return false;
+    },
+
     onDidMount() {
-        this.decorateSelectNode();
+        this.kendoify();
     },
 
     onWillUpdate() {
-        this.undecorateSelectNode();
+        this.unkendoify();
     },
 
     onDidUpdate() {
-        this.decorateSelectNode();
+        this.kendoify();
     },
 
     onDidUnmount() {
-        this.undecorateSelectNode();
+        this.unkendoify();
+    },
+
+    onChange() {
+        if (this.props.onChange) {
+            this.props.onChange({
+                type: 'change',
+                value: this._selectNode.value
+            });
+        }
     },
 
     render() {
         return (
             h('div.sc-SelectBox',
-                { className: this.props.className },
+                {
+                    className: this.props.className,
+                },
                 h('select',
-                    { ref: node => this.setSelectNode(node) },
-                    Seq.from(this.props.options).map(option =>
-                        typeof option === 'string' || typeof option === 'number'
-                            ? h('option', { value: option }, option)
-                            : h('option', { value: option.value }, option.text)
-                    )))
+                    {
+                        ref: this.setSelectNode,
+                        value: this._value,
+                        onChange: this.onChange,
+                        disabled: this.props.disabled
+                    },
+                    this._normalizedOptions.map(option =>
+                        h('option',
+                            { value: option.value },
+                            option.text)))) 
         );
     }
 });

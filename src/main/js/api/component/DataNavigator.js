@@ -3,37 +3,6 @@ import {
     defineClassComponent
 } from 'js-surface';
 
-
-import React from 'react';
-
-console.log(React)
-
-const start = Date.now();
-
-for (let i = 0; i < 100000; ++i) {
-    let x = React.createElement('div',
-        { class: 'my-class', id: 'my-id' },
-        React.createElement('div', { class: 'my-class2', id: 'my-id2'}, 'my-div'));    
-}
-
-const end = Date.now();
-
-
-console.log('Duration:', (end - start) / 1000);
-
-const start2 = Date.now();
-const h2 = (...args) => React.createElement(...args);
-for (let i = 0; i < 100000; ++i) {
-//    let x = h('div.my-class#my-id > div.my-class2#my-id2', 'my-div');
-    let x = h('div',
-        { className: 'my-class', id: 'my-id' },
-        h('div', { className: 'my-class2', id: 'my-id2'}, 'my-div'));    
-}
-
-const end2 = Date.now();
-
-console.log('Duration2:', (end2 - start2) / 1000);
-
 import { Spec }
     from 'js-spec';
 
