@@ -5,6 +5,7 @@ import {
 
 import SceneOfButtons from '../scenes/SceneOfButtons';
 import SceneOfFormFields from '../scenes/SceneOfFormFields';
+import SceneOfPaginations from '../scenes/SceneOfPaginations';
 import SceneOfDataTables from '../scenes/SceneOfDataTables';
 
 export default defineClassComponent({
@@ -13,7 +14,7 @@ export default defineClassComponent({
     render() {
         return (
             h('div',
-                SceneOfFormFields())
+                SceneOfPaginations())
         );
     }
 });

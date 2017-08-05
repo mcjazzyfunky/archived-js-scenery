@@ -1,4 +1,4 @@
-import ComponentHelper from '../helper/ComponentHelper';
+import PaginationUtils from '../../internal/util/PaginationUtils';
 
 import { defineFunctionalComponent, createElement as h } from 'js-surface';
 import { Seq } from 'js-essential';
@@ -6,7 +6,7 @@ import { Spec } from 'js-spec';
 import SelectBox from './SelectBox';
 
 export default defineFunctionalComponent({
-    displayName: 'Pagination',
+    displayName: 'Paginator',
 
     properties: {
         pageIndex: {
@@ -30,98 +30,74 @@ export default defineFunctionalComponent({
             defaultValue: null
         },
 
-        mode: {
+        type: {
             type: String,
-            constraint:
-                Spec.oneOf(
-                    'standard-paginator',
-                    'simple-paginator',    
-                    'advanced-paginator',
-                    'page-size-selector',
-                    'info-about-page',
-                    'info-about-items'),
-         
-            defaultValue:
-                'standard-paginator' 
+            constraint: Spec.oneOf('standard', 'simple', 'advanced')
         },
         
         className: {
             type: String,
             nullable: true,
             defaultValue: null
+        },
+
+        onChange: {
+            type: Function,
+            nullable: true,
+            defaultValue: null
         }
     },
 
-    render({ pageIndex, pageSize, totalItemCount, className, mode }) {
+    render(props) {
+        const { pageIndex, pageSize, totalItemCount, className, type } = props;
+
         let ret = null;
         
         const
-            facts = gatherPaginationFacts(
-                pageIndex, pageSize, totalItemCount, className);
+            details = PaginationUtils.preparePaginationDetails(
+                pageIndex, pageSize, totalItemCount, { className });
 
 
-        switch(mode) {
-        case 'standard-paginator':
-            ret = createStandardPaginator(facts);
+        switch(type) {
+        case 'standard':
+            ret = createStandardPaginator(props, details);
             break;
         
-        case 'simple-paginator':
-            ret = createSimplePaginator(facts);
+        case 'simple':
+            ret = createSimplePaginator(props, details);
             break;
         
-        case 'advanced-paginator':
-            ret = createAdvancedPaginator(facts);
-            break;
-
-        case 'page-size-selector':
-            ret = createPageSizeSelector(facts, elem => this.setDomElem(elem));
-            break;
-        
-        case 'info-about-page':
-            ret =
-                h('div.item',
-                     buildInfoTextAboutPage(facts));
-            break;
-
-        case 'info-about-items':
-            ret =
-                h('div',
-                    { className },
-                    buildInfoTextAboutItems(facts));
-            
+        case 'advanced':
+            ret = createAdvancedPaginator(props, details);
             break;
 
         default:
             // This should never happen
-            throw new Error(`[Pagination] Illegal mode '${mode}'`);
+            throw new Error(`[Paginator] Illegal type '${type}'`);
         }
 
         return ret;
-    },
-
-    setDomElem(elem) {
-        this._domElem = elem;
     }
 });
 
 
-function createStandardPaginator(facts) {
+function createStandardPaginator(props, details) {
     const
         paginationInfo =
             determineVisiblePageButtons(
-                facts.pageIndex,
-                facts.pageCount,
+                details.pageIndex,
+                details.pageCount,
                 6),
 
         moveToPage = targetPage => {
-            if (facts.onChange) {
-                facts.onChange({targetPage});
+            if (details.onChange) {
+                details.onChange({targetPage});
             }
         },
 
-        firstPageButton = createFirstPageButton(facts, 1),
+        firstPageButton = createFirstPageButton(details, 1, moveToPage),
         
-        previousPageButton = createPreviousPageButton(facts),
+        previousPageButton = createPreviousPageButton(details),
         
         precedingEllipsisLink =
             paginationInfo.firstButtonIndex === 1
@@ -137,25 +113,25 @@ function createStandardPaginator(facts) {
                 paginationInfo.lastButtonIndex + 1)
                 .map(
                     index =>
-                        h(index === facts.pageIndex ? 'button.ui.icon.primary.active.button' : 'div.item',
+                        h(index === details.pageIndex ? 'button.ui.icon.primary.active.button' : 'div.item',
                             { onClick: createClickHandler(() => moveToPage(index)),
                                 tabIndex: -1,
-                                dataPage: index + 1,
+                                'data-page': index + 1,
                                 key: index
                             },
                             index + 1)),
                     
         succeedingEllipsisLink =
-            paginationInfo.lastButtonIndex === facts.pageCount
+            paginationInfo.lastButtonIndex === details.pageCount
                 ? null
                 : h('div.item',
                     { onClick: createClickHandler(() => moveToPage(1))
                     },
                     '...'),
         
-        nextPageButton = createNextPageButton(facts),
+        nextPageButton = createNextPageButton(details, moveToPage),
 
-        lastPageButton = createLastPageButton(facts, facts.pageCount);
+        lastPageButton = createLastPageButton(details, details.pageCount, moveToPage);
 
     return (
         h('div.ui.secondary.menu',
@@ -170,13 +146,24 @@ function createStandardPaginator(facts) {
     );
 }
 
-function createSimplePaginator(facts) {
+function createSimplePaginator(props, details) {
     const
-        firstPageButton = createFirstPageButton(facts),
-        previousPageButton = createPreviousPageButton(facts),
-        nextPageButton = createNextPageButton(facts),
-        lastPageButton = createLastPageButton(facts),
-        infoAboutPage = h('div.item.ui.large.label', buildInfoTextAboutPage(facts));
+        moveToPage =
+            pageIndex => {
+                if (props.onChange) {
+                    props.onChange({
+                        type: 'change',
+                        value: pageIndex
+                    });
+                }
+            },
+
+        firstPageButton = createFirstPageButton(details, null, moveToPage),
+        previousPageButton = createPreviousPageButton(details, moveToPage),
+        nextPageButton = createNextPageButton(details, moveToPage),
+        lastPageButton = createLastPageButton(details, null, moveToPage),
+        infoAboutPage = h('div.item.ui.large.label',
+            `${details.pageIndex + 1} / ${details.pageCount}`);
     
     return (
         h('div.ui.secondary.menu',
@@ -188,12 +175,12 @@ function createSimplePaginator(facts) {
     );
 }
 
-function createAdvancedPaginator(facts) {
+function createAdvancedPaginator(props, details) {
     const
         firstPageButton =  createFirstPageButton(),
         previousPageButton = createPreviousPageButton(),
         nextPageButton = createNextPageButton(),
-        lastPageButton = createLastPageButton(facts),
+        lastPageButton = createLastPageButton(details),
 
         pageNoControl =
             h('div.ui.input.item.small',
@@ -213,45 +200,6 @@ function createAdvancedPaginator(facts) {
 }
 
 
-function buildInfoTextAboutPage({ pageIndex, pageCount, valid }) {
-    return valid
-        ? `Page ${pageIndex + 1} of ${pageCount}`
-        : null;
-}
-
-function createPageSizeSelector({ pageSize }, onRef ) {
-    const sizes = [10, 25, 50, 100, 250, 500];
-
-
-    return (
-        h('div.sc-Pagination',
-            'Items/page:',
-            SelectBox({
-                value: String(pageSize),
-                options: sizes
-            }))
-    );
-}
-
-function buildInfoTextAboutItems({ pageIndex, pageSize, totalItemCount, valid }) {
-    let infoText = null;
-    
-    if (valid) {
-        const
-            firstItemNo = pageIndex * pageSize + 1,
-            lastItemNo = Math.min(firstItemNo + pageSize - 1, totalItemCount);
-
-        infoText =
-            `Items ${firstItemNo} - ${lastItemNo} of ${totalItemCount}`;
-    }
-
-    return infoText;
-}
-
-
-
-
-
 
 
 function createClickHandler(onClick) {
@@ -262,7 +210,7 @@ function createClickHandler(onClick) {
 }
 
 
-function createFirstPageButton(facts, text) {
+function createFirstPageButton(details, text, moveToPage) {
     const
         isNumericText = text !== null && !isNaN(text),
 
@@ -272,25 +220,29 @@ function createFirstPageButton(facts, text) {
                 : h('span.k-icon.k-i-arrow-end-left');
 
     return (
-        h('button.k-button', children)
+        h('button.k-button',
+            { onClick: () => moveToPage(0) },
+            children)
     );
 }
 
-function createPreviousPageButton(facts) {
+function createPreviousPageButton(details,moveToPage) {
     return (
         h('button.k-button',
+            { onClick: () => moveToPage(details.pageIndex - 1) },
             h('span.k-icon.k-i-arrow-60-left'))
     );
 }
 
-function createNextPageButton(facts) {
+function createNextPageButton(details, moveToPage) {
     return (
         h('button.k-button',
+            { onClick: () => moveToPage(details.pageIndex + 1) },
             h('span.k-icon.k-i-arrow-60-right'))
     );
 }
 
-function createLastPageButton(facts, text = null) {
+function createLastPageButton(details, text = null, moveToPage) {
     const
         isNumericText = text !== null && !isNaN(text),
         children =
@@ -300,44 +252,12 @@ function createLastPageButton(facts, text = null) {
 
     return (
         h('button.k-button',
+            { onClick: () => moveToPage(details.pageCount - 1) },
             children)
     );
 }
 
 // -----------------------------------
-
-function gatherPaginationFacts(pageIndex, pageSize, totalItemCount, className) {
-    const ret = {};
-
-    ret.className = className;
-
-    ret.pageIndex = isNaN(pageIndex) ? -1 : Math.max(-1, parseInt(pageIndex, 10));
-
-    ret.pageSize = isNaN(pageSize)
-        ? (pageSize === null || pageSize === Infinity ? Infinity : -1)
-        : Math.floor(pageSize);
-
-    if (ret.pageSize <= 0) {
-        ret.pageSize = -1;
-    }
-
-    ret.totalItemCount = isNaN(totalItemCount) ? -1 : Math.max(-1, Number.parseInt(totalItemCount, 10));
-
-    ret.pageCount = (ret.totalItemCount == -1 || ret.pageSize == -1)
-        ? -1
-        : Math.ceil(ret.totalItemCount / ret.pageSize);
-
-    ret.isFirstPage = ret.pageIndex === 0;
-
-    ret.isLastPage = ret.pageCount > 0 && ret.pageCount === ret.pageIndex + 1;
-
-    ret.valid =
-        ret.pageIndex >= 0
-            && ret.pageCount >= 0
-            && ret.pageSize > 0;
-
-    return ret;
-}
 
 function determineVisiblePageButtons(pageIndex, pageCount, maxPageButtonCount) {
     const

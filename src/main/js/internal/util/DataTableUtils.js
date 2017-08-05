@@ -1,5 +1,5 @@
-export default class DataTableHelper {
-    static buildTableMetrics(config, data) {
+export default {
+    prepareDataTableDetails(config, data) {
         const result =  {
             headers: [],
             columns: [],
@@ -27,7 +27,7 @@ export default class DataTableHelper {
 
         return result;
     }
-}
+};
 
 function walkColumnsConfig(columns, result, colspan = 0, depth = 0, ancestors = []) {
     for (let i = 0; i < columns.length; ++i) {
@@ -71,61 +71,3 @@ function walkColumnsConfig(columns, result, colspan = 0, depth = 0, ancestors = 
         }
     }
 }
-
-// ----------------------------
-
-// ----------------------------
-/*
-const config = {
-    columns: [
-        { title: 'SNo.'
-        },
-        { title: 'Name',
-            columns: [
-                { title: '1' },
-                { title: '2' }
-            ]
-        },
-        { title: 'Language',
-            columns: [
-                { title: 'Native'
-                },
-                { title: 'Others',
-                    columns: [
-                        { title: "2"},
-                        { title: "3"}
-                    ]
-                }
-            ]    
-        }
-
-        
-    ]
-}
-
-
-const config2 = {
-    columns: [
-        { title: 'ID'
-        },
-        { title: 'User',
-            columns: [
-                { title: 'Name',
-                    columns: [
-                        { title: 'First name'},
-                        { title: 'Last name'}
-                    ]
-                },
-                { title: 'City'
-                }
-            ]
-        },
-        { title: 'remarks'
-        }
-    ]
-};
-
-console.log(DataTableHelper.calcTableMetrics(config));
-process.exit(0);
-
-*/

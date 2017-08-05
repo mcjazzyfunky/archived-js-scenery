@@ -10,7 +10,9 @@ import { Seq }
     from 'js-essential';
 
 import DataTable from './DataTable';
-import Pagination from './Pagination';
+import Paginator from './Paginator';
+import PageSizeSelector from './PageSizeSelector';
+import PaginationInfo from './PaginationInfo';
 import Menu from './Menu';
 import Button from './Button';
 
@@ -126,7 +128,7 @@ function buildActionMenuItems(actions) {
 
 function createPaginator(config) {
     return h('div.sc-DataNavigator-paginator',
-        Pagination({
+        Paginator({
             mode: 'advanced-paginator',
             pageIndex: 1,
             pageSize: 25,
@@ -136,26 +138,9 @@ function createPaginator(config) {
 
 function createPageSizeSelector(config) {
 
-    return Pagination({
-        mode: 'page-size-selector',
+    return PageSizeSelector({
         pageSize: 25
     });
-
-    return h('div.sc-DataNavigator-pageSizeSelector',
-        h('label.sc-DataNavigator-pageSizeSelectorLabel', 'Items/page:'),
-        Menu({
-            //direction: 'top',
-
-            items: [{
-                text: `10`,
-                
-                items: 
-                    Seq.of(10, 25, 50, 100, 250, 500).map(n => ({
-                        text: n
-                    })).toArray()
-            }]
-        })
-    );
 }
 
 function createFooter(config) {
@@ -163,8 +148,8 @@ function createFooter(config) {
         h('div.sc-DataNavigator-footer',
             createPaginator(config),
             createPageSizeSelector(config),
-            Pagination({
-                mode: 'info-about-items',
+            PaginationInfo({
+                type: 'info-about-items',
                 pageIndex: 0,
                 pageSize: 25,
                 totalItemCount: 1225

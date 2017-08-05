@@ -4,7 +4,6 @@ import {
 } from 'js-surface';
 
 import { Spec } from 'js-spec';
-import { Seq } from 'js-essential';
 import jQuery from 'jquery';
 
 export default defineClassComponent({

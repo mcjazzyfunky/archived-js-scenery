@@ -1,4 +1,4 @@
-import DataTableHelper from '../../internal/helper/DataTableHelper';
+import DataTableUtils from '../../internal/util/DataTableUtils';
 
 import {
     createElement as h,
@@ -54,7 +54,7 @@ export default defineClassComponent({
             props = this.props,
             config = props.config,
             data = props.data,
-            metrics = DataTableHelper.buildTableMetrics(config, data);
+            metrics = DataTableUtils.preapareDataTableDetails(config, data);
        
         return (
             h('.sc-DataTable > table',
