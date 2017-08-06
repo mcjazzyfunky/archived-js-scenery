@@ -46,7 +46,8 @@ export default defineClassComponent({
                     type: 'standard',
                     pageIndex: this.state.pageIndex,
                     pageSize: this.state.pageSize,
-                    totalItemCount: this.state.totalItemCount
+                    totalItemCount: this.state.totalItemCount,
+                    onChange: ev => this.setPageIndex(ev.value)
                 }), 
                 Paginator({
                     type: 'simple',
@@ -59,7 +60,8 @@ export default defineClassComponent({
                     type: 'advanced',
                     pageIndex: this.state.pageIndex,
                     pageSize: this.state.pageSize,
-                    totalItemCount: this.state.totalItemCount
+                    totalItemCount: this.state.totalItemCount,
+                    onChange: ev => this.setPageIndex(ev.value)
                 }),
                 PageSizeSelector({
                     pageSize: this.state.pageSize,

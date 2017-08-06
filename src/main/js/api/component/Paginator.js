@@ -3,7 +3,6 @@ import PaginationUtils from '../../internal/util/PaginationUtils';
 import { defineFunctionalComponent, createElement as h } from 'js-surface';
 import { Seq } from 'js-essential';
 import { Spec } from 'js-spec';
-import SelectBox from './SelectBox';
 
 export default defineFunctionalComponent({
     displayName: 'Paginator',
@@ -89,52 +88,42 @@ function createStandardPaginator(props, details) {
                 details.pageCount,
                 6),
 
-        moveToPage = targetPage => {
-            if (details.onChange) {
-                details.onChange({targetPage});
-            }
-        },
+        onClick = createClickHandler(props.onChange),
 
-        firstPageButton = createFirstPageButton(details, 1, moveToPage),
+        firstPageButton = createPageButton(0, details, onClick),
         
-        previousPageButton = createPreviousPageButton(details),
+        previousPageButton = createPreviousPageButton(details, onClick),
         
         precedingEllipsisLink =
             paginationInfo.firstButtonIndex === 1
                 ? null
-                : h('div.item',
-                    { onClick: createClickHandler(() => moveToPage(1))
-                    },
-                    '...'),
+                : createEllipsisButton(
+                    Math.max(0, paginationInfo.firstButtonIndex
+                        - Math.floor(paginationInfo.maxPageButtonCount / 2)),
+                    details, onClick),
                 
         otherPageButtons =
             Seq.range(
                 paginationInfo.firstButtonIndex ,
                 paginationInfo.lastButtonIndex + 1)
                 .map(
-                    index =>
-                        h(index === details.pageIndex ? 'button.ui.icon.primary.active.button' : 'div.item',
-                            { onClick: createClickHandler(() => moveToPage(index)),
-                                tabIndex: -1,
-                                'data-page': index + 1,
-                                key: index
-                            },
-                            index + 1)),
+                    index => createPageButton(index, details, onClick)),
                     
         succeedingEllipsisLink =
             paginationInfo.lastButtonIndex === details.pageCount
                 ? null
-                : h('div.item',
-                    { onClick: createClickHandler(() => moveToPage(1))
-                    },
-                    '...'),
+                : createEllipsisButton(
+                    Math.min(details.pageCount - 1,
+                        paginationInfo.lastButtonIndex
+                        + Math.floor(paginationInfo.maxPageButtonCount / 2) - 1),
+                    details, onClick),
         
-        nextPageButton = createNextPageButton(details, moveToPage),
+        nextPageButton = createNextPageButton(details, onClick),
 
-        lastPageButton = createLastPageButton(details, details.pageCount, moveToPage);
+        lastPageButton = createPageButton(details.pageCount - 1, details, onClick);
 
     return (
-        h('div.ui.secondary.menu',
+        h('div.sc-Paginator.sc-Paginator--standard',
             previousPageButton,
             firstPageButton,
             precedingEllipsisLink,
@@ -148,21 +137,12 @@ function createStandardPaginator(props, details) {
 
 function createSimplePaginator(props, details) {
     const
-        moveToPage =
-            pageIndex => {
-                if (props.onChange) {
-                    props.onChange({
-                        type: 'change',
-                        value: pageIndex
-                    });
-                }
-            },
-
-        firstPageButton = createFirstPageButton(details, null, moveToPage),
-        previousPageButton = createPreviousPageButton(details, moveToPage),
-        nextPageButton = createNextPageButton(details, moveToPage),
-        lastPageButton = createLastPageButton(details, null, moveToPage),
-        infoAboutPage = h('div.item.ui.large.label',
+        onClick = createClickHandler(props.onChange),
+        firstPageButton = createFirstPageButton(details, onClick),
+        previousPageButton = createPreviousPageButton(details, onClick),
+        nextPageButton = createNextPageButton(details, onClick),
+        lastPageButton = createLastPageButton(details, onClick),
+        infoAboutPage = h('div',
             `${details.pageIndex + 1} / ${details.pageCount}`);
     
     return (
@@ -177,14 +157,16 @@ function createSimplePaginator(props, details) {
 
 function createAdvancedPaginator(props, details) {
     const
-        firstPageButton =  createFirstPageButton(),
-        previousPageButton = createPreviousPageButton(),
-        nextPageButton = createNextPageButton(),
-        lastPageButton = createLastPageButton(details),
+        onClick = createClickHandler(props.onChange),
+        firstPageButton =  createFirstPageButton(details, onClick),
+        previousPageButton = createPreviousPageButton(details, onClick),
+        nextPageButton = createNextPageButton(details, onClick),
+        lastPageButton = createLastPageButton(details, onClick),
 
         pageNoControl =
             h('div.ui.input.item.small',
-                h('input[type=text][size=3]'));
+                h('input[type=text][size=3]',
+                    { value: details.pageIndex + 1 }));
 
     return (
         h('div.sc-Pagination.sc-Pagination--advanced > table > tbody > tr',
@@ -192,7 +174,7 @@ function createAdvancedPaginator(props, details) {
             h('td', previousPageButton),
             h('td', 'Page'),
             h('td', { style: { padding: '0 10px'}}, pageNoControl),
-            h('td', 'of 1000'),
+            h('td', 'of ' + details.pageCount),
             h('td', nextPageButton),
             h('td', lastPageButton)
         )                                                                          
@@ -200,64 +182,101 @@ function createAdvancedPaginator(props, details) {
 }
 
 
+function createClickHandler(onChange) {
+    let ret = null;
 
+    if (onChange) {
+        ret = ev => {
+            const
+                target =
+                    ev.target.tagName === 'BUTTON'
+                        ? ev.target
+                        : ev.target.parentNode,
 
-function createClickHandler(onClick) {
-    return event => {
-        event.preventDefault();
-        onClick();
-    };
+                pageIndex = 
+                    Number.parseInt(
+                        target.getAttribute('data-page-index'), 10);
+
+            onChange({
+                type: 'change',
+                value: pageIndex
+            });
+        };
+    }
+
+    return ret;
 }
 
-
-function createFirstPageButton(details, text, moveToPage) {
-    const
-        isNumericText = text !== null && !isNaN(text),
-
-        children =
-            isNumericText
-                ? text
-                : h('span.k-icon.k-i-arrow-end-left');
-
+function createPageButton(pageIndex, details, onClick) {
     return (
         h('button.k-button',
-            { onClick: () => moveToPage(0) },
-            children)
+            {
+                className: pageIndex === details.pageIndex ? 'k-state-selected' : null,
+                'data-page-index': pageIndex,
+                onClick
+            },
+            pageIndex + 1)
     );
 }
 
-function createPreviousPageButton(details,moveToPage) {
+function createEllipsisButton(pageIndex, details, onClick) {
     return (
         h('button.k-button',
-            { onClick: () => moveToPage(details.pageIndex - 1) },
-            h('span.k-icon.k-i-arrow-60-left'))
+            {
+                'data-page-index': pageIndex,
+                onClick
+            },
+            '...')
     );
 }
 
-function createNextPageButton(details, moveToPage) {
+function createFirstPageButton(details, onClick) {
     return (
         h('button.k-button',
-            { onClick: () => moveToPage(details.pageIndex + 1) },
-            h('span.k-icon.k-i-arrow-60-right'))
+            {
+                disabled: details.isFirstPage,
+                'data-page-index': 0,
+                onClick
+            },
+            h('span.fa.fa-angle-double-left'))
     );
 }
 
-function createLastPageButton(details, text = null, moveToPage) {
-    const
-        isNumericText = text !== null && !isNaN(text),
-        children =
-            isNumericText
-                ? text
-                : h('span.k-icon.k-i-arrow-end-right');
-
+function createPreviousPageButton(details, onClick) {
     return (
         h('button.k-button',
-            { onClick: () => moveToPage(details.pageCount - 1) },
-            children)
+            {
+                disabled: details.isFirstPage,
+                'data-page-index': details.pageIndex - 1,
+                onClick
+            },
+            h('span.fa.fa-angle-left'))
     );
 }
 
-// -----------------------------------
+function createNextPageButton(details, onClick) {
+    return (
+        h('button.k-button',
+            {
+                disabled: details.isLastPage,
+                'data-page-index': details.pageIndex + 1,
+                onClick
+            },
+            h('span.fa.fa-angle-right'))
+    );
+}
+
+function createLastPageButton(details, onClick) {
+    return (
+        h('button.k-button',
+            {
+                disabled: details.isLastPage,
+                'data-page-index': details.pageCount - 1,
+                onClick
+            },
+            h('span.fa.fa-angle-double-right'))
+    );
+}
 
 function determineVisiblePageButtons(pageIndex, pageCount, maxPageButtonCount) {
     const
@@ -280,7 +299,8 @@ function determineVisiblePageButtons(pageIndex, pageCount, maxPageButtonCount) {
     return {
         pageButtonCount: pageButtonCount,
         firstButtonIndex: firstPageNumber - 1,
-        lastButtonIndex: lastPageNumber - 1
+        lastButtonIndex: lastPageNumber - 1,
+        maxPageButtonCount
     };
 }
 

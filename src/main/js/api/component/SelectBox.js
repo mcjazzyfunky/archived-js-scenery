@@ -112,17 +112,13 @@ export default defineClassComponent({
 
     kendoify() {
         if (this._selectNode) {
-            const $select = jQuery(this._selectNode);
-           
-            $select.css('width', ($select.width() + 20) + 'px');
-
-            $select.on('change', this.onChange);
-
-            $select.kendoDropDownList({
-                autoWidth: true,
-                dataTextField: 'text',
-                dataValueField: 'value'
-            });
+            jQuery(this._selectNode)
+                .on('change', this.onChange)
+                .kendoDropDownList({
+                    autoWidth: true,
+                    dataTextField: 'text',
+                    dataValueField: 'value'
+                });
         }
     },
 
