@@ -14,7 +14,7 @@ export default defineClassComponent({
     render() {
         return (
             h('div',
-                SceneOfPaginations())
+                SceneOfDataTables())
         );
     }
 });

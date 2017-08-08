@@ -48,6 +48,7 @@ body {
 .sc-Paginator .sc-Paginator-cell {
     display: table-cell;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 .sc-Paginator button:not(.k-state-selected):not(:hover):not(:focus) {
@@ -60,19 +61,39 @@ body {
 }
 
 .sc-Paginator-previousPageButton {
-    margin-right: 1em;
+    margin-right: 0.4em;
 }
 
 .sc-Paginator-nextPageButton {
-    margin-left: 0.7em;
+    margin-left: 0.4em;
+}
+
+.sc-Paginator-pageTextField {
+    padding: 0 0.8em;
+}
+
+.sc-Paginator-pageTextField > .sc-TextField-input {
+    width: 5em;
 }
 
 /*--------------------------
   PageSizeSelector 
  --------------------------*/
+.sc-PageSizeSelector {
+    display: inline-table;
+}
+
+.sc-PageSizeSelector-row {
+    display: table-row;
+}
+
+.sc-PageSizeSelector-cell {
+    display: table-cell;
+    vertical-align: middle;
+}
 
 .sc-PageSizeSelector .k-dropdown {
-    width: 90px !important;
+    width: 80px !important;
 }
 
 .sc-PageSizeSelector label {
@@ -146,7 +167,6 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
  --------------------------*/
 
 .sc-DataNavigator {
-    
 }
 
 .sc-DataNavigator-toolbar {
@@ -210,20 +230,6 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     vertical-align: top;
 }
 
-.sc-DataNavigator-pageSizeSelector {
-    float: left;
-    vertical-align: text-top;
-    margin-right: 20px;
-}
-
-.sc-DataNavigator-pageSizeSelector:after {
-    position: absolute;
-    top: 6px;
-    font-size: 10px;
-    content: '|';
-    color: #ddd;
-}
-
 .sc-DataNavigator .sc-DataTable {
     border-top-style: solid;
     border-top-color: grey;
@@ -232,28 +238,41 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
 }
 
 .sc-DataNavigator-footer {
+    display: table;
+    border-collapse: collapse;
     font-size: 13px;
     text-align: right;
-    margin-top: -1px;
+    background-color: #f5f5f5;
+}
+
+.sc-DataNavigator-footer-inner {
+    display: table-row;
+    width: 100%;
     padding: 0.1em;
     padding-right: 0.8em;
-    background-color: #f5f5f5;
+}
+
+.sc-DataNavigator-footer-inner > * {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 3px 10px;
     border: 0 solid #dbdbdb;
-    border-width: 1px 1px 1px 1px;
+    border-width: 0px 1px 1px 1px;
     border-top-color: #ddd;
-    height: 32px;
+}
+
+.sc-DataNavigator-footer-inner > *:first-child {
+    padding: 3px 2px;
 }
 
 .sc-DataNavigator-footer .sc-Paginator {
-    float: left;
 }
 
 .sc-DataNavigator-footer .sc-PageSizeSelector {
-    float: left;
 }
 
 .sc-DataNavigator-footer .sc-PaginationInfo {
-    float: right;
+    width: 100%;
 }
 
 /*

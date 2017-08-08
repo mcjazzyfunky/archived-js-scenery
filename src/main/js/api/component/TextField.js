@@ -113,7 +113,7 @@ export default defineClassComponent({
         }
     },
 
-    onKeyDown(ev) {console.log(this.__platformComponent, Object.keys(this))
+    onKeyDown(ev) {
         const
             target = ev.target,
             value = target.value, 
@@ -143,15 +143,19 @@ export default defineClassComponent({
             { value } = this.state;
 
         return (
-            h('.sc-TextField > input[type=text].k-textbox',
+            h('.sc-TextField',
                 {
-                    className,
-                    value,
-                    onChange: this.onChange,
-                    onKeyPress: this.onKeyPress,
-                    onKeyDown: this.onKeyDown,
-                    ref: this.setNode
-                })
+                    className
+                },
+                h('input[type=text].k-textbox',
+                    {
+                        className: 'sc-TextField-input',
+                        value,
+                        onChange: this.onChange,
+                        onKeyPress: this.onKeyPress,
+                        onKeyDown: this.onKeyDown,
+                        ref: this.setNode
+                    }))
         );
     }
 });

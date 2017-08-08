@@ -170,9 +170,12 @@ export default defineClassComponent({
                         onChange: this.onChange,
                         disabled: this.props.disabled
                     },
-                    this._normalizedOptions.map(option =>
+                    this._normalizedOptions.map((option, key) =>
                         h('option',
-                            { value: option.value },
+                            {
+                                value: option.value,
+                                key
+                            },
                             option.text)))) 
         );
     }

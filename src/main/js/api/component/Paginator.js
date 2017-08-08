@@ -111,7 +111,7 @@ function createStandardPaginator(props, details) {
                     index => createPageButton(index, details, onClick)),
                     
         succeedingEllipsisLink =
-            paginationInfo.lastButtonIndex === details.pageCount
+            paginationInfo.lastButtonIndex === details.pageCount - 2
                 ? null
                 : createEllipsisButton(
                     Math.min(details.pageCount - 1,
@@ -129,12 +129,15 @@ function createStandardPaginator(props, details) {
                 previousPageButton,
                 firstPageButton,
                 precedingEllipsisLink,
-                otherPageButtons, 
+                ...otherPageButtons, 
                 succeedingEllipsisLink,
                 lastPageButton,
                 nextPageButton)
             
-                .map(item => h('div.sc-Paginator-cell', item))
+                .map((item, key) =>
+                    h('div.sc-Paginator-cell',
+                        { key },    
+                        item))
         )
     );
 }
@@ -142,10 +145,10 @@ function createStandardPaginator(props, details) {
 function createSimplePaginator(props, details) {
     const
         onClick = createClickHandler(props.onChange),
-        firstPageButton = createFirstPageButton(details, onClick),
+        // firstPageButton = createFirstPageButton(details, onClick),
         previousPageButton = createPreviousPageButton(details, onClick),
         nextPageButton = createNextPageButton(details, onClick),
-        lastPageButton = createLastPageButton(details, onClick),
+        // lastPageButton = createLastPageButton(details, onClick),
 
         infoAboutPage = h('div',
             `${details.pageIndex + 1} / ${details.pageCount}`);
@@ -153,13 +156,17 @@ function createSimplePaginator(props, details) {
     return (
         h('.sc-Paginator.sc-Paginator--simple > .sc-Paginator-row',
             Seq.of(
-                firstPageButton, 
+                // firstPageButton, 
                 previousPageButton,
                 infoAboutPage,
                 nextPageButton,
-                lastPageButton)
+                // lastPageButton
+                )
             
-                .map(item => h('div.sc-Paginator-cell', item)))
+                .map((item, key) =>
+                    h('div.sc-Paginator-cell',
+                        { key },    
+                        item)))
     );
 }
 
@@ -175,6 +182,7 @@ function createAdvancedPaginator(props, details) {
         pageNoControl =
             h('div',
                 TextField({
+                    className: 'sc-Paginator-pageTextField',
                     onKeyDown: ev => {
                         const
                             value = ev.value,
@@ -189,7 +197,6 @@ function createAdvancedPaginator(props, details) {
                             
                             if (isNaN(value) || isNaN(targetPageIndex) || targetPageIndex < 0  || targetPageIndex > details.pageCount - 1) {
                             } else if (props.onChange) {
-                                console.log(ev)
                                 source.blur();
 
                                 props.onChange({
@@ -213,7 +220,10 @@ function createAdvancedPaginator(props, details) {
                 nextPageButton,
                 lastPageButton)
 
-                .map(item => h('.sc-Paginator-cell', item))
+                .map((item, key) =>
+                    h('.sc-Paginator-cell',
+                        { key },
+                        item))
         )                                                                          
     );
 }
@@ -247,7 +257,7 @@ function createClickHandler(onChange) {
 
 function createPageButton(pageIndex, details, onClick) {
     const attrs = {
-        'data-page-index': pageIndex,
+        'data-page-index': pageIndex
     }; 
     
     let ret;

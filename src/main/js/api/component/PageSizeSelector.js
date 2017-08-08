@@ -45,8 +45,10 @@ export default defineFunctionalComponent({
                 }
             });
 
-        return h('div.sc-PageSizeSelector',
-            h('label', 'Items/Page:'),
-            selectBox);
+        return (
+            h('div.sc-PageSizeSelector > div.sc-PageSizeSelector-row',
+                h('.sc-PageSizeSelector-cell > label', 'Items/Page:'),
+                h('.sc-PageSizeSelector-cell', selectBox))
+        );
     }
 });

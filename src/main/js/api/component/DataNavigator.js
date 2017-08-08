@@ -138,7 +138,7 @@ function createPageSizeSelector(config) {
 
 function createFooter(config) {
     return (
-        h('div.sc-DataNavigator-footer',
+        h('div.sc-DataNavigator-footer > div.sc-DataNavigator-footer-inner',
             createPaginator(config),
             createPageSizeSelector(config),
             PaginationInfo({

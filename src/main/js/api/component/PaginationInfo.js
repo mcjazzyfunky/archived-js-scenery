@@ -69,7 +69,7 @@ function buildInfoTextAboutItems({ pageIndex, pageSize, totalItemCount, valid })
             lastItemNo = Math.min(firstItemNo + pageSize - 1, totalItemCount);
 
         infoText =
-            `Items ${firstItemNo} - ${lastItemNo} of ${totalItemCount}`;
+            `${firstItemNo} - ${lastItemNo} of ${totalItemCount} items`;
     }
 
     return infoText;
