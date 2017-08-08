@@ -54,7 +54,7 @@ export default defineClassComponent({
             props = this.props,
             config = props.config,
             data = props.data,
-            metrics = DataTableUtils.preapareDataTableDetails(config, data);
+            metrics = DataTableUtils.prepareDataTableDetails(config, data);
        
         return (
             h('.sc-DataTable > table',

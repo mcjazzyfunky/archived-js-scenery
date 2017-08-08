@@ -6,6 +6,7 @@ import {
 import { Seq } from 'js-essential';
 
 import SelectBox from '../../main/js/api/component/SelectBox';
+import TextField from '../../main/js/api/component/TextField';
 
 export default defineClassComponent({
     displayName: 'SceneOfFormFields',
@@ -43,26 +44,30 @@ export default defineClassComponent({
     render() {
         return (
             h('div',
-                SelectBox({
-                    value: this.state.selectedOption,
-                    options: this.state.options,
-                    disabled: this.state.disabled,
-                    className: 'demo-select-box',
-                    onChange: ev =>
-                        console.log('Change event:', ev)
-                }),
-                h('button.k-button',
-                    { onClick: this.addOption },
-                    'Add option'),
-                h('button.k-button',
-                    { onClick: () => this.selectOption('Option 1') },
-                    'Select "Option 1"'),
-                h('button.k-button',
-                    { onClick: () => this.selectOption('Option 3') },
-                    'Select "Option 3"'),
-                h('button.k-button',
-                    { onClick: () => this.setDisabled(!this.state.disabled) },
-                    this.state.disabled ? 'Enable' : 'Disable' ))
+                h('div',
+                    SelectBox({
+                        value: this.state.selectedOption,
+                        options: this.state.options,
+                        disabled: this.state.disabled,
+                        className: 'demo-select-box',
+                        onChange: ev =>
+                            console.log('Change event:', ev)
+                    }),
+                    h('button.k-button',
+                        { onClick: this.addOption },
+                        'Add option'),
+                    h('button.k-button',
+                        { onClick: () => this.selectOption('Option 1') },
+                        'Select "Option 1"'),
+                    h('button.k-button',
+                        { onClick: () => this.selectOption('Option 3') },
+                        'Select "Option 3"'),
+                    h('button.k-button',
+                        { onClick: () => this.setDisabled(!this.state.disabled) },
+                        this.state.disabled ? 'Enable' : 'Disable' )),
+                h('div',
+                    'Some text field:',
+                    TextField({ defaultValue: 'xxx'})))
         );
     }
 });

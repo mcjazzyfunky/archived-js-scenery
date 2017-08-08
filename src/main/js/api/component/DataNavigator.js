@@ -55,12 +55,6 @@ export default defineClassComponent({
         }
     },
 
-    onRef(ref) {
-        if (ref) {
-     //       jQuery(ref).find('.sc-DataNavigator-toolbarMenu').kendoMenu();
-        }
-    },
-
     render() {
         const
             config = this.props.config,
@@ -69,7 +63,6 @@ export default defineClassComponent({
             footer = createFooter();
 
         return h('div.sc-DataNavigator',
-            { ref: this.onRef },
             toolbar,
             DataTable({ config, data }),
             footer
@@ -129,7 +122,7 @@ function buildActionMenuItems(actions) {
 function createPaginator(config) {
     return h('div.sc-DataNavigator-paginator',
         Paginator({
-            mode: 'advanced-paginator',
+            type: 'advanced',
             pageIndex: 1,
             pageSize: 25,
             totalItemCount: 1225

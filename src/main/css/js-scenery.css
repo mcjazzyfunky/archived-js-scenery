@@ -35,17 +35,52 @@ body {
 }
 
 /*--------------------------
-  Pagination 
+  Paginator 
  --------------------------*/
-
-.sc-Pagination--advanced button {
-    padding: 2px 1px 4px 1px !important;
-    margin: 0 !important;
+.sc-Paginator {
+    display: table;
 }
 
-.sc-Pagination--advanced button:not(:hover),
-.sc-Pagination--advanced button:not(:hover):focus {
-    background: none !important;
+.sc-Paginator .sc-Paginator-row {
+    display: table-row;
+}
+
+.sc-Paginator .sc-Paginator-cell {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.sc-Paginator button:not(.k-state-selected):not(:hover):not(:focus) {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+.sc-Paginator-pageButton--selected {
+    cursor: default;
+}
+
+.sc-Paginator-previousPageButton {
+    margin-right: 1em;
+}
+
+.sc-Paginator-nextPageButton {
+    margin-left: 0.7em;
+}
+
+/*--------------------------
+  PageSizeSelector 
+ --------------------------*/
+
+.sc-PageSizeSelector .k-dropdown {
+    width: 90px !important;
+}
+
+.sc-PageSizeSelector label {
+    margin-right: 1em;
+}
+
+.sc-PageSizeSelector .sc-SelectBox {
+    display: inline-block;
 }
 
 /*--------------------------
@@ -110,6 +145,10 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
   DataNavigator 
  --------------------------*/
 
+.sc-DataNavigator {
+    
+}
+
 .sc-DataNavigator-toolbar {
     padding: 0;
     margin-bottom: 10px;
@@ -133,8 +172,7 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
 
 
 .sc-DataNavigator-toolbar .sc-Menu > ul > li,
-.sc-DataNavigator-toolbar .sc-Menu > ul,
-.sc-DataNavigator-paginator * {
+.sc-DataNavigator-toolbar .sc-Menu > ul {
     border: none !important;
 }
 
@@ -186,28 +224,6 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     color: #ddd;
 }
 
-.sc-DataNavigator-pageSizeSelectorLabel {
-    position: relative;
-    top: -10px;
-    font-size: 90%;
-}
-
-.sc-DataNavigator-toolbar .sc-Pagination {
-    position: relative;
-    top: -3px;
-}
-
-.sc-DataNavigator-toolbar .sc-Pagination input[type=text] {
-    border: 1px solid #aaa !important;
-    padding: 2px 3px 3px 3px;
-    width: 4em;
-}
-
-.sc-DataNavigator-paginator {
-    float: left;
-    vertical-align: text-top;
-}
-
 .sc-DataNavigator .sc-DataTable {
     border-top-style: solid;
     border-top-color: grey;
@@ -226,6 +242,18 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     border-width: 1px 1px 1px 1px;
     border-top-color: #ddd;
     height: 32px;
+}
+
+.sc-DataNavigator-footer .sc-Paginator {
+    float: left;
+}
+
+.sc-DataNavigator-footer .sc-PageSizeSelector {
+    float: left;
+}
+
+.sc-DataNavigator-footer .sc-PaginationInfo {
+    float: right;
 }
 
 /*

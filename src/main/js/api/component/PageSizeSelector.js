@@ -46,6 +46,7 @@ export default defineFunctionalComponent({
             });
 
         return h('div.sc-PageSizeSelector',
+            h('label', 'Items/Page:'),
             selectBox);
     }
 });
