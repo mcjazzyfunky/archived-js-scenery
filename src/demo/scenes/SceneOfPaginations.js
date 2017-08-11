@@ -15,7 +15,7 @@ export default defineClassComponent({
             pageIndex: 0,
             pageSize: 25,
             totalItemCount: 1220,
-            pageSizeOptions: [10, 25, 50, 100, 250, 500],
+            pageSizeOptions: [10, 25, 50, 100, 250, 500, 100000],
             disabled: false
         };
     },

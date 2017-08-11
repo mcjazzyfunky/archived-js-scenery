@@ -55,7 +55,7 @@ export default defineClassComponent({
 
         defaultPageSize: {
             type: Number,
-            defaultValue: 25
+            defaultValue: 10 
         },
 
         defaultPageIndex: {
@@ -94,6 +94,16 @@ export default defineClassComponent({
         this.loadData(params);
     },
 
+    selectPageSize(pageSize) {
+        const
+            params = {
+                offset: 0,
+                itemCount: pageSize
+            };
+
+        this.loadData(params);
+    },
+
     loadData(params) {
         this.loadingStateAfterCancellation = this.state.loadingState;
         this.modifyState({ loadingState: 'loading' });
@@ -107,7 +117,6 @@ export default defineClassComponent({
         const enhancedParams = Object.assign({
             cancelNotifier
         }, params);
-console.log('>>>', enhancedParams);
 
         this.props.loadData(enhancedParams)
             .then(result => this.handleCompletedLoading(params, result))
@@ -135,22 +144,24 @@ console.log('>>>', enhancedParams);
 
     handleCompletedLoading(params, result) {
         if (result.error) {
-            const errMsg = result.error.errorMessage;
+            const
+                errMsg = result.error.errorMessage;
 
             this.modifyState({
                 loadingState: 'error',
                 loadingErrMsg: errMsg,
-                pageIndex: Math.floor(params.offset / this.state.pageSize),
-                totalItemCount: result.totalItemCount
             });
         } else {
-            const { items, totalItemCount } = result;
-console.log(params, this.state)
+            const
+                { items, totalItemCount } = result,
+                pageSize = params.itemCount;
+
             this.modifyState({
                 loadingState: 'loaded',
                 items,
                 totalItemCount,
-                pageIndex: Math.floor(params.offset / this.state.pageSize)
+                pageIndex: Math.floor(params.offset / pageSize),
+                pageSize
             });
         }
     },
@@ -173,11 +184,12 @@ console.log(params, this.state)
             config = this.props.config,
             data = this.state.items || [],
             toolbar = this.createToolbar(config, this.state),
-            footer = this.createFooter(config, this.state);
+            footer = this.createFooter(config, this.state),
+            dataOffset = this.state.pageIndex * this.state.pageSize;
 
         return h('div.sc-DataNavigator',
             toolbar,
-            DataTable({ config, data }),
+            DataTable({ config, data, dataOffset }),
             footer
         );
     }, 
@@ -248,7 +260,8 @@ console.log(params, this.state)
 
     createPageSizeSelector(state) {
         return PageSizeSelector({
-            pageSize: state.pageSize
+            pageSize: state.pageSize,
+            onChange: ev => this.selectPageSize(ev.value)
         });
     },
 

@@ -1,14 +1,11 @@
 export default {
-    prepareDataTableDetails(config, data) {
+    prepareDataTableDetails(config, data, dataOffset = 0) {
         const result =  {
             headers: [],
             columns: [],
-            showRecordNumbers: !!config.recordNumbers,
-            offsetRecordNumbers:
-                config.recordNumbers
-                    && typeof config.recordNumbers === 'object'
-                    ? config.recordNumbers.offset || 0
-                    : 0, 
+            showRecordNumbers: config.showRecordNumbers,
+            dataOffset,
+
             selectionMode:
                 config.selectionMode || 'none',
 

@@ -24,14 +24,8 @@ const tableConfigSpec =
                     })
                 )),
 
-        recordNumbers:
-            Spec.or(
-                Spec.nothing,
-                Spec.boolean,
-                Spec.shape({
-                    offset: Spec.nonnegativeInteger
-                })
-            )
+        showRecordNumbers:
+            Spec.optional(Spec.boolean)
     });
 
 export default defineClassComponent({
@@ -46,6 +40,12 @@ export default defineClassComponent({
         data: {
             type: Array,
             nullable: true
+        },
+
+        dataOffset: {
+            type: Number,
+            constraint: Spec.nonnegativeInteger,
+            defaultValue: 0
         }
     },
 
@@ -54,7 +54,8 @@ export default defineClassComponent({
             props = this.props,
             config = props.config,
             data = props.data,
-            metrics = DataTableUtils.prepareDataTableDetails(config, data);
+            dataOffset = props.dataOffset,
+            metrics = DataTableUtils.prepareDataTableDetails(config, data, dataOffset);
        
         return (
             h('.sc-DataTable > table',
@@ -154,7 +155,7 @@ function createTableBodyRow(rec, idx, metrics) {
     if (metrics.showRecordNumbers) {
         addits.push(
             h('td',
-                metrics.offsetRecordNumbers + idx + 1));
+                metrics.dataOffset + idx + 1));
     }
 
     if (metrics.selectionMode === 'multi') {

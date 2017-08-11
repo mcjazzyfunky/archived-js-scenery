@@ -79,36 +79,11 @@ const
                 }
             ],
 
-            recordNumbers: { offset: 0 },
+            showRecordNumbers: true,
             selectionMode: 'multi'
         };
 
-const config2 = {
-    columns: [
-        { title: 'SNo.'
-        },
-        { title: 'Name',
-            columns: [
-                { title: '1' },
-                { title: '2' }
-            ]
-        },
-        { title: 'Language',
-            columns: [
-                { title: 'Native'
-                },
-                { title: 'Others',
-                    columns: [
-                        { title: "2"},
-                        { title: "3"}
-                    ]
-                }
-            ]    
-        }
-    ]
-};
-
-const data = [
+const data2 = [
     { firstName: 'Jane',
         lastName: 'Doe',
         street: 'Main Street 123',
@@ -146,12 +121,35 @@ const data = [
         city: 'Towny Town'
     }];
 
+const
+    firstNames = ['Jane', 'John', 'Mary', 'Peter', 'Carla', 'Jim'],
+    lastNames = ['Doe', 'Smith', 'Mayer', 'Steel', 'Becker', 'Bowles'],
+    streets = ['Main Street 123', 'Green Road 432', 'Narrow Road 987'],
+    postalCodes = ['1234', '2345', '5432'],
+    cities = ['New York', 'Los Angelos', 'Seattle', 'Miami'];
+
+
+const data = [];
+
+for (let i = 0; i < 1223; ++i) {
+    data.push({
+        firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
+        lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
+        street: streets[Math.floor(Math.random() * streets.length)],
+        postalCode: postalCodes[Math.floor(Math.random() * postalCodes.length)],
+        city: cities[Math.floor(Math.random() * postalCodes.length)]
+    });
+}
+
 const loadData = async function (params) {
-    console.log('loading params:', params)
-    const result = { items: data, totalItemCount: 1223 };
+    console.log('loading params:', params);
+    const result = {
+        items: data.slice(params.offset, params.offset + params.itemCount),
+        totalItemCount: data.length
+    };
 
     return new Promise(resolve => {
-        setTimeout(() => resolve(result), 1000);
+        setTimeout(() => resolve(result), 500);
     });
 };
 
