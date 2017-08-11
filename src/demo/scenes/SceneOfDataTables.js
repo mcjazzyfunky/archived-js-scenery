@@ -146,11 +146,20 @@ const data = [
         city: 'Towny Town'
     }];
 
+const loadData = async function (params) {
+    console.log('loading params:', params)
+    const result = { items: data, totalItemCount: 1223 };
+
+    return new Promise(resolve => {
+        setTimeout(() => resolve(result), 1000);
+    });
+};
+
 export default defineClassComponent({
     displayName: 'ScenesOfDataTables',
 
     render() {
         return h('div',
-            DataNavigator({ config, data }));
+            DataNavigator({ config, loadData }));
     }
 });

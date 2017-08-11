@@ -14,7 +14,6 @@ import Paginator from './Paginator';
 import PageSizeSelector from './PageSizeSelector';
 import PaginationInfo from './PaginationInfo';
 import Menu from './Menu';
-import Button from './Button';
 
 import ComponentHelper from '../helper/ComponentHelper';
 
@@ -50,102 +49,222 @@ export default defineClassComponent({
             constraint: dataNavSpec
         },
 
-        data: {
+        loadData: {
+            type: Function
+        },
 
+        defaultPageSize: {
+            type: Number,
+            defaultValue: 25
+        },
+
+        defaultPageIndex: {
+            type: Number,
+            defaultValue: 0      
         }
+    },
+
+    constructor(props) {
+        this.state = {
+            pageIndex: props.defaultPageIndex,
+            pageSize: props.defaultPageSize,
+            totalItemCount: 0,
+            items: null,
+            loadingState: 'init', // init, loading, loaded, error
+            loadingErrMsg: null 
+        };
+
+        this.loadingStateAfterCancelledLoading = null;
+        this.notifyCancelledLoading = null;
+    },
+
+    modifyState(modifications) {
+        this.state = Object.assign({}, this.state, modifications);
+
+        this.refresh(); // TODO
+    },
+
+    moveToPage(pageIndex) {
+        const
+            params = {
+                offset: pageIndex * this.state.pageSize,
+                itemCount: this.state.pageSize
+            };
+
+        this.loadData(params);
+    },
+
+    loadData(params) {
+        this.loadingStateAfterCancellation = this.state.loadingState;
+        this.modifyState({ loadingState: 'loading' });
+
+        const cancelNotifier = new Promise(resolve => {
+            this.notifyCancelledLoading = () => {
+                resolve();
+            };
+        });
+        
+        const enhancedParams = Object.assign({
+            cancelNotifier
+        }, params);
+console.log('>>>', enhancedParams);
+
+        this.props.loadData(enhancedParams)
+            .then(result => this.handleCompletedLoading(params, result))
+            .catch(error => this.handleFailedLoading(params, error));
+    },
+
+    cancelLoading() {
+        const
+            notifyCancelledLoading = this.notifyCancelledLoading,
+            
+            loadingStateAfterCancelledLoading =
+                this.loadingStateAfterCancelledLoading;
+        
+        if (notifyCancelledLoading && loadingStateAfterCancelledLoading) {
+            this.notifyCancelledLoading = null;
+            this.loadingStateAfterCancellation = null;
+
+            this.modifyState({
+                loadingState: loadingStateAfterCancelledLoading
+            });
+
+            notifyCancelledLoading();
+        }
+    },
+
+    handleCompletedLoading(params, result) {
+        if (result.error) {
+            const errMsg = result.error.errorMessage;
+
+            this.modifyState({
+                loadingState: 'error',
+                loadingErrMsg: errMsg,
+                pageIndex: Math.floor(params.offset / this.state.pageSize),
+                totalItemCount: result.totalItemCount
+            });
+        } else {
+            const { items, totalItemCount } = result;
+console.log(params, this.state)
+            this.modifyState({
+                loadingState: 'loaded',
+                items,
+                totalItemCount,
+                pageIndex: Math.floor(params.offset / this.state.pageSize)
+            });
+        }
+    },
+
+    handleFailedLoading(params, error) {
+        alert(error); // TODO
+    },
+
+    onDidMount() {
+        const params = {
+            itemCount: this.state.pageSize,
+            offset: this.state.pageIndex * this.state.pageSize
+        };
+
+        this.loadData(params);
     },
 
     render() {
         const
             config = this.props.config,
-            data = this.props.data,
-            toolbar = createToolbar(config),
-            footer = createFooter();
+            data = this.state.items || [],
+            toolbar = this.createToolbar(config, this.state),
+            footer = this.createFooter(config, this.state);
 
         return h('div.sc-DataNavigator',
             toolbar,
             DataTable({ config, data }),
             footer
         );
-    } 
-});
+    }, 
 
-function createToolbar(config) {
-    const
-        actionMenus = createActionMenus(config.actions),
+    // -----
 
-        headline = config.headline
-            ? h('h4.sc-DataNavigator-headline', config.headline)
-            : null;
-
-    return (
-        h('div.sc-DataNavigator-toolbar',
-            headline,
-            h('div.sc-DataNavigator-actions',
-                actionMenus))
-    ); 
-}
-
-function createActionMenus(actions) {
-    const ret = [];
-
-    for (const action of actions) {
+    createToolbar(config) {
         const
-            menuConfig = { text: action.text, icon: action.icon },
-            items = [menuConfig];
+            actionMenus = this.createActionMenus(config.actions),
 
-        if (action.actions) {
-            menuConfig.items = buildActionMenuItems(action.actions);
+            headline = config.headline
+                ? h('h4.sc-DataNavigator-headline', config.headline)
+                : null;
+
+        return (
+            h('div.sc-DataNavigator-toolbar',
+                headline,
+                h('div.sc-DataNavigator-actions',
+                    actionMenus))
+        ); 
+    },
+
+    createActionMenus(actions) {
+        const ret = [];
+
+        for (const action of actions) {
+            const
+                menuConfig = { text: action.text, icon: action.icon },
+                items = [menuConfig];
+
+            if (action.actions) {
+                menuConfig.items = this.buildActionMenuItems(action.actions);
+            }
+
+            ret.push(h('div.sc-DataNavigator-action', Menu({ items })));
         }
 
-        ret.push(h('div.sc-DataNavigator-action', Menu({ items })));
+        return ret;
+    },
+
+    buildActionMenuItems(actions) {
+        let ret = null;
+
+        if (actions && actions.length > 0) {
+            ret =
+                Seq.from(actions).map(action => ({
+                    text: action.text,
+                    icon: action.icon,
+                    items: this.buildActionMenuItems(action.actions) || undefined
+                })).toArray();
+        }
+
+        return ret;
+    },
+
+    createPaginator(params) {
+        const { pageIndex, pageSize, totalItemCount } = params;
+        
+        return h('div.sc-DataNavigator-paginator',
+            Paginator({
+                type: 'advanced',
+                pageIndex,
+                pageSize,
+                totalItemCount,
+                onChange: ev => this.moveToPage(ev.value)
+            }));
+    },
+
+    createPageSizeSelector(state) {
+        return PageSizeSelector({
+            pageSize: state.pageSize
+        });
+    },
+
+    createFooter(config, state) {
+        const { pageIndex, pageSize, totalItemCount } = state;
+
+        return (
+            h('div.sc-DataNavigator-footer > div.sc-DataNavigator-footer-inner',
+                this.createPaginator(state),
+                this.createPageSizeSelector(state),
+                PaginationInfo({
+                    type: 'info-about-items',
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    totalItemCount: totalItemCount
+                }))
+        );
     }
-
-    return ret;
-}
-
-function buildActionMenuItems(actions) {
-    let ret = null;
-
-    if (actions && actions.length > 0) {
-        ret =
-            Seq.from(actions).map(action => ({
-                text: action.text,
-                icon: action.icon,
-                items: buildActionMenuItems(action.actions) || undefined
-            })).toArray();
-    }
-
-    return ret;
-}
-
-function createPaginator(config) {
-    return h('div.sc-DataNavigator-paginator',
-        Paginator({
-            type: 'advanced',
-            pageIndex: 1,
-            pageSize: 25,
-            totalItemCount: 1225
-        }));
-}
-
-function createPageSizeSelector(config) {
-
-    return PageSizeSelector({
-        pageSize: 25
-    });
-}
-
-function createFooter(config) {
-    return (
-        h('div.sc-DataNavigator-footer > div.sc-DataNavigator-footer-inner',
-            createPaginator(config),
-            createPageSizeSelector(config),
-            PaginationInfo({
-                type: 'info-about-items',
-                pageIndex: 0,
-                pageSize: 25,
-                totalItemCount: 1225
-            }))
-    );
-}
+});

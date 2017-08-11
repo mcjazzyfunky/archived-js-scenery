@@ -51,24 +51,34 @@ export default defineClassComponent({
         this._nodeRef = ref;
     },
 
-    onDidMount() {
+    kendoify() {
         jQuery(this._nodeRef).kendoMenu({
             direction: this.props.direction
         });
+    },
+
+    unkendoify() {
+        const menu = jQuery(this._nodeRef).data('kendoMenu');
+        
+        if (menu) {
+            menu.destroy();
+        }
+    },
+
+    onDidMount() {
+        this.kendoify();
     },
 
     onWillUpdate() {
-        jQuery(this._nodeRef).data('kendoMenu').destroy();
+        this.unkendoify();
     },
 
     onDidUpdate() {
-        jQuery(this._nodeRef).kendoMenu({
-            direction: this.props.direction
-        });
+        this.kendoify();
     },
 
     onWillUnmount() {
-        jQuery(this._nodeRef).data('kendoMenu').destroy();
+        this.unkendouify(); 
     },
 
     render() {
