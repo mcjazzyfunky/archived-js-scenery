@@ -43,6 +43,7 @@ function walkColumnsConfig(columns, result, colspan = 0, depth = 0, ancestors = 
                     title, field,
                     colspan: 1, rowspan: null,
                     align, depth,
+                    width: column.width || '1*',
                     sortable: !!column.sortable
                 };
             

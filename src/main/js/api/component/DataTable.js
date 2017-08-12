@@ -16,6 +16,7 @@ const tableConfigSpec =
                     Spec.shape({
                         title: Spec.string,
                         field: Spec.string,
+                        width: Spec.optional(Spec.string),
                         sortable: Spec.optional(Spec.boolean)
                     }),
                     Spec.shape({
@@ -76,12 +77,41 @@ export default defineClassComponent({
        
         return (
             h('.sc-DataTable > table',
+                this.createTableColGroup(details),
                 this.createTableHeader(details),
                 this.createTableBody(details))
         );
     },
 
     // ------------------------------------------------------------------
+
+    createTableColGroup(details) {
+        const cols = [];
+
+        if (details.showRecordNumbers) {
+            cols.push(h('col', { style: { width: '50px' } }));
+        }
+
+        if (details.selectionMode !== 'none') {
+            cols.push(h('col', { style: { width: '50px' } }));
+        }
+
+        for (const col of details.columns) {
+            const width =
+                col.width.endsWith('*')    
+                    ?  Math.floor(
+                        Number.parseFloat(col.width) * 100
+                            / details.columns.length) + '%'
+                    : col.width;
+col.calcWidth = width;
+            cols.push(h('col', { style: { width } }));
+        }
+
+        return (
+            h('colgroup',
+                cols)
+        );
+    },
 
     createTableHeader(details) {
         const ret =
@@ -165,12 +195,12 @@ export default defineClassComponent({
         }
 
         return (
-            h('th',
+            h('th.sc-DataTable-sortableColumnHeader',
                 {   
                     colSpan: cell.colspan,
                     rowSpan: cell.rowspan,
-                    'data-field': cell.field,
-                    'data-sorting': sortDirection,
+                    'data-sorting-field': cell.field,
+                    'data-sorting-direction': sortDirection,
                     onClick
                 },
                 cell.title,
@@ -194,7 +224,7 @@ export default defineClassComponent({
         
         if (details.showRecordNumbers) {
             addits.push(
-                h('td',
+                h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned',
                     details.dataOffset + idx + 1));
         }
 
@@ -228,6 +258,7 @@ export default defineClassComponent({
     createTableBodyCell(column, rec) {
         return (
             h('td',
+                { style: { width: column.calcWidth } },
                 rec[column.field])
         );
     },
@@ -242,8 +273,8 @@ export default defineClassComponent({
         const
             onSort = this.props.onSort,
             target = ev.target,
-            field = target.getAttribute('data-field'),
-            direction = target.getAttribute('data-sorting');
+            field = target.getAttribute('data-sorting-field'),
+            direction = target.getAttribute('data-sorting-direction');
         
         if (onSort) {
             onSort({

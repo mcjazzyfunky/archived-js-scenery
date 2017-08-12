@@ -1,6 +1,7 @@
 body {
     font-family: Arial;
     padding: 10px;
+    font-family: 'Open Sans',Helvetica,Arial;
 }
 
 
@@ -108,11 +109,20 @@ body {
   DataTable 
  --------------------------*/
 
+.sc-DataTable {
+    width: 100%;
+    height: 200px;
+    overflow: auto;
+    position: relative;
+}
+
 .sc-DataTable > table {
+    position: relative;
     width: 100%;
     border: 1px solid #dbdbdb;
     border-collapse: collapse;
     border-spacing: 0;
+    table-layout: fixed;
 }
 
 .sc-DataTable > table > thead  > tr > th {
@@ -121,11 +131,27 @@ body {
     border-style: solid;
     border-color: #d9d9d9;
     padding: 5px;
-   // background-image: linear-gradient(to bottom,#f9f9f9 2%, #f2f2f2 98%);
+    white-space: nowrap;
 }
 
-.sc-DataTable > table > thead  > tr > th:first-child {
+.sc-DataTable > table > thead > tr > th:first-child {
     border-left-width: 0;
+}
+
+.sc-DataTable > table {
+    width: 100% !important;
+}
+
+.sc-DataTable > table > thead {
+   width: 100% !important;
+}
+
+.sc-DataTable > table > tbody {
+    width: 100% !important;
+}
+
+body {
+    background-color: red;
 }
 
 .sc-DataTable > table > tbody > tr > td {
@@ -133,6 +159,8 @@ body {
     border-width: 0 0 1px 1px;
     border-style: solid;
     border-color: #e2e2e2;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .sc-DataTable > table > tbody > tr > td:first-child {
@@ -143,19 +171,22 @@ body {
     background-color: #fafafa;
 }
 
+.sc-DataTable-sortableColumnHeader {
+    cursor: pointer;
+}
+
 .sc-DataTable-sortingIcon {
-    font-size: 75%;
     padding-left: 1em;
 }
 
 .sc-DataTable-sortingIcon.fa-sort-asc {
     position: relative;
-    top: 0.2em;
+    top: 0.3em;
 }
 
 .sc-DataTable-sortingIcon.fa-sort-desc {
     position: relative;
-    top: -0.2em;
+    top: -0.15em;
 }
 
 .sc-DataTable-sortingIcon.fa-sort {

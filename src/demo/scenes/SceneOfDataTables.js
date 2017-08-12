@@ -149,7 +149,7 @@ const
 
 const data = [];
 
-for (let i = 0; i < 1223; ++i) {
+for (let i = 0; i < 122333; ++i) {
     data.push({
         id: i,
         firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
