@@ -41,6 +41,11 @@ export default defineFunctionalComponent({
             defaultValue: null
         },
 
+        disabled: {
+            type: Boolean,
+            defaultValue: false
+        },
+
         onChange: {
             type: Function,
             nullable: true,
@@ -49,13 +54,17 @@ export default defineFunctionalComponent({
     },
 
     render(props) {
-        const { pageIndex, pageSize, totalItemCount, className, type } = props;
+        const { 
+            pageIndex, pageSize, totalItemCount,
+            className, type, disabled
+        } = props;
 
         let ret = null;
         
         const
             details = PaginationUtils.preparePaginationDetails(
-                pageIndex, pageSize, totalItemCount, { className });
+                pageIndex, pageSize, totalItemCount,
+                { className, disabled });
 
 
         switch(type) {
@@ -183,6 +192,7 @@ function createAdvancedPaginator(props, details) {
             h('div',
                 TextField({
                     className: 'sc-Paginator-pageTextField',
+                    disabled: details.disabled,
                     onKeyDown: ev => {
                         const
                             value = ev.value,
@@ -257,7 +267,8 @@ function createClickHandler(onChange) {
 
 function createPageButton(pageIndex, details, onClick) {
     const attrs = {
-        'data-page-index': pageIndex
+        'data-page-index': pageIndex,
+        disabled: true //details.disabled
     }; 
     
     let ret;
@@ -295,7 +306,7 @@ function createFirstPageButton(details, onClick) {
     return (
         h('button.sc-Paginator-firstPageButton.k-button',
             {
-                disabled: details.isFirstPage,
+                disabled: details.isFirstPage || details.disabled,
                 'data-page-index': 0,
                 onClick
             },
@@ -307,7 +318,7 @@ function createPreviousPageButton(details, onClick) {
     return (
         h('button.sc-Paginator-previousPageButton.k-button',
             {
-                disabled: details.isFirstPage,
+                disabled: details.isFirstPage || details.disabled,
                 'data-page-index': details.pageIndex - 1,
                 onClick
             },
@@ -319,7 +330,7 @@ function createNextPageButton(details, onClick) {
     return (
         h('button.sc-Paginator-nextPageButton.k-button',
             {
-                disabled: details.isLastPage,
+                disabled: details.isLastPage || details.disabled,
                 'data-page-index': details.pageIndex + 1,
                 onClick
             },
@@ -331,7 +342,7 @@ function createLastPageButton(details, onClick) {
     return (
         h('button.sc-Paginator-lastPageButton.k-button',
             {
-                disabled: details.isLastPage,
+                disabled: details.isLastPage || details.disabled,
                 'data-page-index': details.pageCount - 1,
                 onClick
             },

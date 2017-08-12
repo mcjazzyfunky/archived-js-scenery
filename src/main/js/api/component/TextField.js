@@ -17,6 +17,11 @@ export default defineClassComponent({
             defaultValue: null
         },
 
+        disabled: {
+            type: Boolean,
+            defaultValue: false
+        },
+
         className: {
             type: String,
             nullable: true,
@@ -139,7 +144,7 @@ export default defineClassComponent({
 
     render() {
         const
-            { className } = this.props,
+            { className, disabled } = this.props,
             { value } = this.state;
 
         return (
@@ -151,6 +156,7 @@ export default defineClassComponent({
                     {
                         className: 'sc-TextField-input',
                         value,
+                        disabled,
                         onChange: this.onChange,
                         onKeyPress: this.onKeyPress,
                         onKeyDown: this.onKeyDown,

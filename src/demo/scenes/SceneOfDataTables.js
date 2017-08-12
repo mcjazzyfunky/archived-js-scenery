@@ -12,23 +12,28 @@ const
             headline: 'Customers',
 
             actions: [
-                { type: 'general',
+                {
+                    type: 'general',
                     text: 'New',
                     icon: 'k-plus'
                 },
-                { type: 'single-row',
+                {   
+                    type: 'single-row',
                     text: 'View',
                     icon: 'k-file-txt'
                 },
-                { type: 'single-row',
+                {
+                    type: 'single-row',
                     text: 'Delete',
                     icon: 'k-delete'
                 },
-                { type: 'menu',
+                {
+                    type: 'menu',
                     text: 'Export',
 
                     actions: [
-                        { type: 'menu',
+                        {
+                            type: 'menu',
                             text: 'Export to CSV',
                             actions: [
                                 {   
@@ -41,7 +46,8 @@ const
                                 }
                             ]
                         },
-                        { type: 'multi-row',
+                        {
+                            type: 'multi-row',
                             text: 'Export to Excel'
                         }
                     ]
@@ -49,30 +55,42 @@ const
             ],
 
             columns: [
-                { title: 'Name',
+                {
+                    title: 'Name',
                     columns: [
-                        { title: 'First name',
+                        {
+                            title: 'First name',
                             field: 'firstName',
+                            sortable: true,
                             align: 'left'
                         },
-                        { title: 'Last name',
+                        {
+                            title: 'Last name',
                             field: 'lastName',
+                            sortable: true,
                             align: 'left'
                         }
                     ]
                 },
-                { title: 'Adress',
+                {
+                    title: 'Adress',
                     columns: [
-                        { title: 'Street',
+                        {
+                            title: 'Street',
                             field: 'street',
+                            sortable: true,
                             align: 'left'
                         },
-                        { title: 'Postal code',
+                        {
+                            title: 'Postal code',
                             field: 'postalCode',
+                            sortable: true,
                             align: 'left'
                         },
-                        { title: 'City',
+                        {
+                            title: 'City',
                             field: 'city',
+                            sortable: true,
                             align: 'left'
                         }
                     ]
@@ -133,6 +151,7 @@ const data = [];
 
 for (let i = 0; i < 1223; ++i) {
     data.push({
+        id: i,
         firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
         lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
         street: streets[Math.floor(Math.random() * streets.length)],
@@ -143,13 +162,38 @@ for (let i = 0; i < 1223; ++i) {
 
 const loadData = async function (params) {
     console.log('loading params:', params);
+    
+    if (!params.sorting) {
+        data.sort((a, b) => a.id < b.id);
+    } else {
+        const
+            field = params.sorting.field,
+            sgn = params.sorting.direction === 'asc' ? 1 : -1;
+
+        data.sort((a, b) => {
+            const
+                aEqualsB = a[field] === b[field],
+                aGreaterB =
+                    aEqualsB
+                        ? (a.id < b.id)    
+                        : (a[field] > b[field]);
+
+            
+            return aGreaterB ? sgn : -sgn;
+        });
+    }
+
     const result = {
         items: data.slice(params.offset, params.offset + params.itemCount),
         totalItemCount: data.length
     };
 
+    let timeout = null;
+
+    params.cancelNotifier.then(() => clearTimeout(timeout));
+
     return new Promise(resolve => {
-        setTimeout(() => resolve(result), 500);
+        timeout = setTimeout(() => resolve(result), 500);
     });
 };
 

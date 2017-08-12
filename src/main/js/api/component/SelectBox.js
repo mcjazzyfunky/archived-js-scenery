@@ -71,9 +71,13 @@ export default defineClassComponent({
         if (nextProps.value !== null && this.value !== nextProps.value) {
             this._value = nextProps.value;
 
-            jQuery(this._selectNode)
-                .data('kendoDropDownList')
-                .value(this._value);
+            const api =
+                jQuery(this._selectNode)
+                    .data('kendoDropDownList')
+                
+            if (api) {
+                api.value(this._value);
+            }
         }
 
         if (nextProps.options) {

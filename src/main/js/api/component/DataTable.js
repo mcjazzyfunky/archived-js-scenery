@@ -46,6 +46,22 @@ export default defineClassComponent({
             type: Number,
             constraint: Spec.nonnegativeInteger,
             defaultValue: 0
+        },
+
+        sorting: {
+            type: Object,
+            constraint: Spec.shape({
+                field: Spec.String,
+                direction: Spec.oneOf('asc', 'desc')
+            }),
+            nullable: true,
+            defaultValue: null
+        },
+
+        onSort: {
+            type: Function,
+            nullable: true,
+            defaultValue: null
         }
     },
 
@@ -55,145 +71,189 @@ export default defineClassComponent({
             config = props.config,
             data = props.data,
             dataOffset = props.dataOffset,
-            metrics = DataTableUtils.prepareDataTableDetails(config, data, dataOffset);
+            sorting = props.sorting || null,
+            details = DataTableUtils.prepareDataTableDetails(config, data, dataOffset, sorting);
        
         return (
             h('.sc-DataTable > table',
-                createTableHeader(metrics),
-                createTableBody(metrics))
+                this.createTableHeader(details),
+                this.createTableBody(details))
         );
+    },
+
+    // ------------------------------------------------------------------
+
+    createTableHeader(details) {
+        const ret =
+            h('thead',
+                Seq.from(details.headers)
+                    .map((headerRow, idx) =>
+                        this.createTableHeaderRow(headerRow, idx, details)));
+
+        return ret;
+    },
+
+    createTableHeaderRow(headerRow, idx, details) {
+        let
+            addits = [],
+            tailExtra = null;
+
+        const numHeaderRows = details.headers.length;
+
+        if (details.showRecordNumbers) {
+            if (idx === 0 && numHeaderRows > 1) {
+                addits.push(
+                    h('th',
+                        { rowSpan: numHeaderRows - 1 }));
+            } else {
+                addits.push(h('th', ''));
+            }
+        }
+
+        if (details.selectionMode !== 'none') {
+            if (idx === 0 && numHeaderRows > 1) {
+                addits.push(h('th', { rowSpan: numHeaderRows - 1 }));
+            } else if (details.selectionMode === 'multi') {
+                addits.push(
+                    h('th',
+                        h('div',
+                            h('input[type=checkbox].k-checkbox'),
+                            h('label.k-checkbox-label'))));
+            } else {
+                addits.push(
+                    h('th'));
+            }
+        }
+
+        if (details.hasActions) {
+            if (idx === 0 && numHeaderRows > 1) {
+                tailExtra = h('th', { rowSpan: numHeaderRows - 1 });
+            } else {
+                tailExtra = h('th', '');
+            }
+        }
+
+        return (
+            h('tr',
+                addits,
+                Seq.from(headerRow)
+                    .map(headerCell =>
+                        this.createTableHeaderCell(headerCell, details)),
+                tailExtra)
+        );
+
+    },
+
+    createTableHeaderCell(cell, details) {
+        const onClick = cell.sortable
+            ? this.onSortableHeaderClick
+            : null;
+    
+        let
+            sortIcon = null,
+            sortDirection = null;
+
+        if (cell.sortable) {
+            if (details.sorting && cell.field && cell.field === details.sorting.field) {
+                sortDirection = details.sorting.direction;
+            
+                sortIcon = h('i.sc-DataTable-sortingIcon.fa.fa-sort-'
+                    + sortDirection);
+            } else {
+                sortIcon = h('i.sc-DataTable-sortingIcon.fa.fa-sort');
+            }
+        }
+
+        return (
+            h('th',
+                {   
+                    colSpan: cell.colspan,
+                    rowSpan: cell.rowspan,
+                    'data-field': cell.field,
+                    'data-sorting': sortDirection,
+                    onClick
+                },
+                cell.title,
+                sortIcon)
+        );
+    },
+
+    createTableBody(details) {
+        const recs = Seq.from(details.data);
+
+        return (
+            h('tbody',
+                recs.map((rec, idx) =>
+                    this.createTableBodyRow(rec, idx, details)))  
+        );
+    },
+
+    createTableBodyRow(rec, idx, details) {
+        let addits = [],
+            tailExtra = null;
+        
+        if (details.showRecordNumbers) {
+            addits.push(
+                h('td',
+                    details.dataOffset + idx + 1));
+        }
+
+        if (details.selectionMode === 'multi') {
+            addits.push(
+                h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned',
+                    h('input[type=checkbox].k-checkbox'),
+                    h('label.k-checkbox-label', '')));
+        } else if (details.selectionMode === 'single') {
+            addits.push(
+                h('td',
+                    h('input[type=radio].ui.radio')));
+        }
+
+        if (details.hasActions) {
+            tailExtra = h('td',
+                this.createActionButtonGroup(rec, details));
+        }
+
+        return (
+            h('tr',
+                { className: idx % 2 === 0 ? null : 'sc-DataTable-bodyRow--alt'},
+                addits,
+                Seq.from(details.columns)
+                    .map(column =>
+                        this.createTableBodyCell(column, rec)),
+                tailExtra)
+        );
+    },
+
+    createTableBodyCell(column, rec) {
+        return (
+            h('td',
+                rec[column.field])
+        );
+    },
+
+    createActionButtonGroup(rec, details) {
+        return h('div',
+            h('div.item.icon', h('i.icon.edit.outline')),
+            h('div.item.icon', h('i.icon.trash.outline')));
+    },
+
+    onSortableHeaderClick(ev) {
+        const
+            onSort = this.props.onSort,
+            target = ev.target,
+            field = target.getAttribute('data-field'),
+            direction = target.getAttribute('data-sorting');
+        
+        if (onSort) {
+            onSort({
+                type: 'sort',
+                field,
+                direction:
+                    direction === 'asc'
+                        ? 'desc'
+                        : 'asc'
+            });
+        }
     }
 });
-
-// ------------------------------------------------------------------
-
-function createTableHeader(metrics) {
-    const ret =
-        h('thead',
-            Seq.from(metrics.headers)
-                .map((headerRow, idx) =>
-                    createTableHeaderRow(headerRow, idx, metrics)));
-
-    return ret;
-}
-
-function createTableHeaderRow(headerRow, idx, metrics) {
-    let
-        addits = [],
-        tailExtra = null;
-
-    const numHeaderRows = metrics.headers.length;
-
-    if (metrics.showRecordNumbers) {
-        if (idx === 0 && numHeaderRows > 1) {
-            addits.push(
-                h('th',
-                    { rowSpan: numHeaderRows - 1 }));
-        } else {
-            addits.push(h('th', ''));
-        }
-    }
-
-    if (metrics.selectionMode !== 'none') {
-        if (idx === 0 && numHeaderRows > 1) {
-            addits.push(h('th', { rowSpan: numHeaderRows - 1 }));
-        } else if (metrics.selectionMode === 'multi') {
-            addits.push(
-                h('th',
-                    h('div',
-                        h('input[type=checkbox].k-checkbox'),
-                        h('label.k-checkbox-label'))));
-        } else {
-            addits.push(
-                h('th'));
-        }
-    }
-
-    if (metrics.hasActions) {
-        if (idx === 0 && numHeaderRows > 1) {
-            tailExtra = h('th', { rowSpan: numHeaderRows - 1 });
-        } else {
-            tailExtra = h('th', '');
-        }
-    }
-
-    return (
-        h('tr',
-            addits,
-            Seq.from(headerRow)
-                .map(createTableHeaderCell),
-            tailExtra)
-    );
-
-}
-
-function createTableHeaderCell(cell) {
-    return (
-        h('th',
-            { className: null,
-                colSpan: cell.colspan,
-                rowSpan: cell.rowspan 
-            },
-            cell.title)
-    );
-}
-
-function createTableBody(metrics) {
-    const recs = Seq.from(metrics.data);
-
-    return (
-        h('tbody',
-            recs.map((rec, idx) =>
-                createTableBodyRow(rec, idx, metrics)))  
-    );
-}
-
-function createTableBodyRow(rec, idx, metrics) {
-    let addits = [],
-        tailExtra = null;
-    
-    if (metrics.showRecordNumbers) {
-        addits.push(
-            h('td',
-                metrics.dataOffset + idx + 1));
-    }
-
-    if (metrics.selectionMode === 'multi') {
-        addits.push(
-            h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned',
-                h('input[type=checkbox].k-checkbox'),
-                h('label.k-checkbox-label', '')));
-    } else if (metrics.selectionMode === 'single') {
-        addits.push(
-            h('td',
-                h('input[type=radio].ui.radio')));
-    }
-
-    if (metrics.hasActions) {
-        tailExtra = h('td',
-            createActionButtonGroup(rec, metrics));
-    }
-
-    return (
-        h('tr',
-            { className: idx % 2 === 0 ? null : 'sc-DataTable-bodyRow--alt'},
-            addits,
-            Seq.from(metrics.columns)
-                .map(column =>
-                    createTableBodyCell(column, rec)),
-            tailExtra)
-    );
-}
-
-function createTableBodyCell(column, rec) {
-    return (
-        h('td',
-            rec[column.field])
-    );
-}
-
-function createActionButtonGroup(rec, metrics) {
-    return h('div',
-        h('div.item.icon', h('i.icon.edit.outline')),
-        h('div.item.icon', h('i.icon.trash.outline')));
-}

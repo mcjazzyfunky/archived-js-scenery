@@ -78,7 +78,7 @@ export default defineClassComponent({
     },
 
     onWillUnmount() {
-        this.unkendouify(); 
+        this.unkendoify(); 
     },
 
     render() {

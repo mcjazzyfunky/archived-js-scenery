@@ -1,18 +1,16 @@
 export default {
-    prepareDataTableDetails(config, data, dataOffset = 0) {
+    prepareDataTableDetails(config, data, dataOffset = 0, sorting = null) {
         const result =  {
             headers: [],
             columns: [],
             showRecordNumbers: config.showRecordNumbers,
             dataOffset,
+            sorting,
 
             selectionMode:
                 config.selectionMode || 'none',
 
-
             actions: [
-                { text: 'Edit' },
-                { text: 'Delete' }
             ],
 
             hasActions: false,
@@ -41,7 +39,12 @@ function walkColumnsConfig(columns, result, colspan = 0, depth = 0, ancestors = 
         if (!column.columns) {
             const
                 align = column.align || 'center',
-                cell = { title, field, colspan: 1, rowspan: null, align, depth };
+                cell = {
+                    title, field,
+                    colspan: 1, rowspan: null,
+                    align, depth,
+                    sortable: !!column.sortable
+                };
             
             result.headers[depth].push(cell);
             result.columns.push(cell);

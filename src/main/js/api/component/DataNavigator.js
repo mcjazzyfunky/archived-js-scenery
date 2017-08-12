@@ -71,10 +71,12 @@ export default defineClassComponent({
             totalItemCount: 0,
             items: null,
             loadingState: 'init', // init, loading, loaded, error
-            loadingErrMsg: null 
+            loadingErrMsg: null,
+            sorting: null
         };
 
-        this.loadingStateAfterCancelledLoading = null;
+        this.loadingIndex = 0;
+        this.loadingStateAfterCancellation = null;
         this.notifyCancelledLoading = null;
     },
 
@@ -104,38 +106,52 @@ export default defineClassComponent({
         this.loadData(params);
     },
 
-    loadData(params) {
+    loadData(params = null) {
         this.loadingStateAfterCancellation = this.state.loadingState;
         this.modifyState({ loadingState: 'loading' });
 
-        const cancelNotifier = new Promise(resolve => {
-            this.notifyCancelledLoading = () => {
-                resolve();
-            };
-        });
+        const
+            loadingIndex = this.loadingIndex,
+
+            cancelNotifier = new Promise(resolve => {
+                this.notifyCancelledLoading = () => {
+                    setTimeout(() => {
+                        resolve();
+                    });
+                };
+            });
         
-        const enhancedParams = Object.assign({
+        const fullParams = Object.assign({
+            itemCount: this.state.pageSize,
+            offset: this.state.pageIndex * this.state.pageSize,
+            sorting: this.state.sorting,
             cancelNotifier
         }, params);
 
-        this.props.loadData(enhancedParams)
-            .then(result => this.handleCompletedLoading(params, result))
-            .catch(error => this.handleFailedLoading(params, error));
+        this.props.loadData(fullParams)
+            .then(result => {
+                if (this.loadingIndex === loadingIndex) {
+                    this.handleCompletedLoading(fullParams, result);
+                }
+            })
+            .catch(error => this.handleFailedLoading(fullParams, error));
     },
 
     cancelLoading() {
+        ++this.loadingIndex;
+
         const
             notifyCancelledLoading = this.notifyCancelledLoading,
             
-            loadingStateAfterCancelledLoading =
-                this.loadingStateAfterCancelledLoading;
-        
-        if (notifyCancelledLoading && loadingStateAfterCancelledLoading) {
+            loadingStateAfterCancellation =
+                this.loadingStateAfterCancellation;
+
+        if (notifyCancelledLoading && loadingStateAfterCancellation) {
             this.notifyCancelledLoading = null;
             this.loadingStateAfterCancellation = null;
 
             this.modifyState({
-                loadingState: loadingStateAfterCancelledLoading
+                loadingState: loadingStateAfterCancellation
             });
 
             notifyCancelledLoading();
@@ -149,7 +165,7 @@ export default defineClassComponent({
 
             this.modifyState({
                 loadingState: 'error',
-                loadingErrMsg: errMsg,
+                loadingErrMsg: errMsg
             });
         } else {
             const
@@ -161,22 +177,19 @@ export default defineClassComponent({
                 items,
                 totalItemCount,
                 pageIndex: Math.floor(params.offset / pageSize),
-                pageSize
+                pageSize,
+                sorting: params.sorting || null
             });
         }
     },
 
     handleFailedLoading(params, error) {
+        throw error;
         alert(error); // TODO
     },
 
     onDidMount() {
-        const params = {
-            itemCount: this.state.pageSize,
-            offset: this.state.pageIndex * this.state.pageSize
-        };
-
-        this.loadData(params);
+        this.loadData();
     },
 
     render() {
@@ -185,11 +198,38 @@ export default defineClassComponent({
             data = this.state.items || [],
             toolbar = this.createToolbar(config, this.state),
             footer = this.createFooter(config, this.state),
-            dataOffset = this.state.pageIndex * this.state.pageSize;
+            dataOffset = this.state.pageIndex * this.state.pageSize,
+            isLoading = this.state.loadingState === 'loading',
+            lockLayer = isLoading ? this.createLockPane() : null,
+            loadingBox = isLoading ? this.createLoadingBox() : null;
 
         return h('div.sc-DataNavigator',
+            lockLayer,
+            loadingBox,
             toolbar,
-            DataTable({ config, data, dataOffset }),
+            DataTable({
+                config,
+                data,
+                dataOffset,
+                sorting: this.state.sorting || null,
+                onSort: ev => {
+                    const
+                        { field, direction } = ev,
+                        pageIndex = this.state.pageIndex,
+                        pageSize = this.state.pageSize,
+
+                        params = {
+                            itemCount: pageSize,
+                            offset: 0,
+
+                            sorting: {
+                                field,
+                                direction
+                            }
+                        };
+
+                    this.loadData(params);
+                }}),
             footer
         );
     }, 
@@ -254,6 +294,7 @@ export default defineClassComponent({
                 pageIndex,
                 pageSize,
                 totalItemCount,
+                disabled: this.state.loadingState === 'loading',
                 onChange: ev => this.moveToPage(ev.value)
             }));
     },
@@ -261,6 +302,7 @@ export default defineClassComponent({
     createPageSizeSelector(state) {
         return PageSizeSelector({
             pageSize: state.pageSize,
+            disabled: this.state.loadingState === 'loading',
             onChange: ev => this.selectPageSize(ev.value)
         });
     },
@@ -278,6 +320,30 @@ export default defineClassComponent({
                     pageSize: pageSize,
                     totalItemCount: totalItemCount
                 }))
+        );
+    },
+
+    createLockPane() {
+        return (
+            h('.sc-DataNavigator-lockPane')
+        );
+    },
+
+    createLoadingBox() {
+        const cancelButton =
+            this.loadingStateAfterCancellation === 'init'
+                ? null
+                : h('button.sc-DataNavigator-loadingBox-cancel.k-button.k-primary',
+                    { onClick: this.cancelLoading },
+                    'Cancel');
+
+        return (
+            h('.sc-DataNavigator-loadingBox > .sc-DataNavigator-loadingBox-inner > .sc-DataNavigator-loadingBox-content',
+                h('.sc-DataNavigator-loadingBox-leftArea',
+                    h('i.fa.fa-spinner.fa-pulse.sc-DataNavigator-loadingBox-icon')),
+                h('.sc-DataNavigator-loadingBox-rightArea',
+                    h('div.sc-DataNavigator-loadingBox-text', 'Loading data ...'),
+                    cancelButton))
         );
     }
 });

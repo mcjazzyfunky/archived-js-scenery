@@ -23,6 +23,11 @@ export default defineFunctionalComponent({
             defaultValue: [10, 25, 100, 250, 500]
         },
 
+        disabled: {
+            type: Boolean,
+            defaultValue: true
+        },
+
         onChange: {
             type: Function,
             nullable: true,
@@ -35,6 +40,7 @@ export default defineFunctionalComponent({
             SelectBox({
                 value: String(props.pageSize),
                 options: props.pageSizeOptions,
+                disabled: props.disabled,
                 onChange: ev => {
                     if (props.onChange) {
                         props.onChange({
