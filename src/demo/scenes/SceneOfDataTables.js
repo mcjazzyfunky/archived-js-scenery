@@ -197,11 +197,30 @@ const loadData = async function (params) {
     });
 };
 
+const config2 = {
+    columns: [
+        {
+            title: 'First Name',
+            field: 'firstName'
+        },
+        {
+            title: 'Last Name',
+            field: 'lastName'
+        },
+        {
+            title: 'City',
+            field: 'city'
+        }
+    ]
+};
+
 export default defineClassComponent({
     displayName: 'ScenesOfDataTables',
 
     render() {
         return h('div',
-            DataNavigator({ config, loadData }));
+            { style: { height: '200px', width: '800px', border: '1px solid green' }},
+            DataTable({ config: { columns: config.columns}, data: data.slice(1, 10) }));
+            //DataNavigator({ config, loadData }));
     }
 });

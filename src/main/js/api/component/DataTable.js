@@ -76,10 +76,19 @@ export default defineClassComponent({
             details = DataTableUtils.prepareDataTableDetails(config, data, dataOffset, sorting);
        
         return (
-            h('.sc-DataTable > table',
-                this.createTableColGroup(details),
-                this.createTableHeader(details),
-                this.createTableBody(details))
+            h('.sc-DataTable',
+                { style: { position: 'relative', display: 'grid', height: '100%' } },
+                h('table.sc-DataTable-headerTable',
+                    this.createTableColGroup(details),
+                    this.createTableHeader(details)),
+                h('.sc-DataTable-scrollpane',
+                    { style: { overflow: 'auto', width: '100%', border: '1px solid red' } },
+                    h('table',
+                    { style: { width: '100%' } },
+                    this.createTableColGroup(details),
+                    this.createTableHeader(details),
+                    this.createTableBody(details)))
+                )
         );
     },
 
