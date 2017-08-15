@@ -1,4 +1,3 @@
-
 /*--------------------------
   Button
  --------------------------*/
@@ -350,7 +349,8 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     margin-left: auto;
     margin-right: auto;
     padding: 1.5em 2em;
-    background-color: rgba(70, 70, 70, 0.9); 
+    xbackground-color: rgba(80, 80, 80, 0.8); 
+    background-color: rgba(30, 52, 70, 0.8);
     color: #fafafa;
     border-radius: 8px;
     font-size: 90%;

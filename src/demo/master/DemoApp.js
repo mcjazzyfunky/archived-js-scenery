@@ -4,6 +4,9 @@ import {
     defineFunctionalComponent
 } from 'js-surface';
 
+import { Spec } from 'js-spec';
+import { Seq } from 'js-essential';
+
 import SceneOfButtons from '../scenes/SceneOfButtons';
 import SceneOfFormFields from '../scenes/SceneOfFormFields';
 import SceneOfPaginations from '../scenes/SceneOfPaginations';
@@ -35,7 +38,44 @@ export default defineClassComponent({
                             HorizontalLayout({
                                 cells: [
                                     {
-                                        content: Sidebar(),
+                                        content: Sidebar({
+                                            items: [
+                                                {
+                                                    text: 'Main Modules',
+                                                    items: [
+                                                        {
+                                                            text: 'Dashboard',
+                                                            icon: 'fa-dashboard'
+                                                        },
+                                                        {
+                                                            text: 'User Management',
+                                                            icon: 'fa-users'
+                                                        },
+                                                        {
+                                                            text: 'File Management',
+                                                            icon: 'fa-files-o'
+                                                        }
+                                                    ]
+                                                }, 
+                                                {
+                                                    text: 'Content Management',
+                                                    items: [
+                                                        {
+                                                            text: 'Web Pages',
+                                                            icon: 'fa-globe'
+                                                        }, 
+                                                        {
+                                                            text: 'Media',
+                                                            icon: 'fa-file-movie-o'
+                                                        },
+                                                        {
+                                                            text: 'SEO',
+                                                            icon: 'fa-external-link'
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }),
                                         flex: 0
                                     },
                                     {
@@ -104,10 +144,86 @@ const Toolbar = defineFunctionalComponent({
     }
 });
 
+
+
+function buildItemsSpec(level =0) {
+    let ret;
+
+    const shape = {
+        text: Spec.optional(Spec.string),
+        icon: Spec.optional(Spec.string),
+        disabled: Spec.optional(Spec.Boolean),
+        onClick: Spec.optional(Spec.Function),
+        version: Spec.optional(Spec.String),
+    };
+
+    if (level >= 2) {
+        ret = Spec.shape(shape);
+    } else {
+        shape.items =
+            Spec.optional(
+                Spec.shape(
+                    buildItemsSpec(level + 1)));
+        
+        ret =
+            Spec.and(
+                Spec.shape(shape),
+                /*
+                Spec.not(
+                    Spec.struct({
+                        items: Spec.something,
+                        spec: Spec.something
+                    })
+                )
+                */    
+                );
+    }
+
+    return ret;
+}
 const Sidebar = defineFunctionalComponent({
     displayName: 'Sidebar',
 
-    render() {
-        return h('.app-Sidebar', 'Sidebar');
+    props: {
+        items: {
+            type: Object,
+            constraint: buildItemsSpec()
+        }
+    },
+
+    render(props) {
+        return (
+            h('.app-Sidebar',
+                renderMenu(props.items))
+        );
     }
 });
+
+function renderMenu(items) {
+    let ret = null;
+
+    if (items) {
+        ret =
+            h('ul',
+                Seq.from(items).map(item => {
+                    const
+                        className =
+                            item.items
+                                ? 'app-Sidebar-menu'
+                                : 'app-Sidebar-item',
+                        
+                        icon =
+                            item.icon
+                                ? ComponentHelper.createIconElement(item.icon)
+                                : null;
+
+                    return h('li',
+                        { className },
+                        icon,
+                        h('label', item.text),
+                        renderMenu(item.items));
+                }));
+    }
+
+    return ret;
+}
