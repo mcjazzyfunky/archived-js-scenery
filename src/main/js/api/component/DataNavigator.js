@@ -203,11 +203,12 @@ export default defineClassComponent({
             lockLayer = isLoading ? this.createLockPane() : null,
             loadingBox = isLoading ? this.createLoadingBox() : null;
 
-        return h('div.sc-DataNavigator',
+        return h('.sc-DataNavigator',
             lockLayer,
             loadingBox,
-            toolbar,
             DataTable({
+                contentAbove: toolbar,
+                contentBelow: footer,
                 config,
                 data,
                 dataOffset,
@@ -230,7 +231,6 @@ export default defineClassComponent({
 
                     this.loadData(params);
                 }}),
-            footer
         );
     }, 
 

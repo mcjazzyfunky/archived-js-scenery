@@ -59,6 +59,19 @@ export default defineClassComponent({
             defaultValue: null
         },
 
+        contentAbove: {
+            type: Object,
+            nullable: true,
+            defaultValue: null
+        },
+
+
+        contentBelow: {
+            type: Object,
+            nullable: true,
+            defaultValue: null
+        },
+
         onSort: {
             type: Function,
             nullable: true,
@@ -91,8 +104,20 @@ export default defineClassComponent({
             sorting = props.sorting || null,
             details = DataTableUtils.prepareDataTableDetails(config, data, dataOffset, sorting);
        
+        const
+            above =
+                !props.contentAbove
+                    ? null
+                    : h('div', props.contentAbove),
+
+            below =
+                !props.contentBelow
+                    ? null
+                    : h('div', props.contentBelow);
+
         return (
             h('.sc-DataTable',
+                above,
                 h('table.sc-DataTable-headerTable',
                     { ref: this.setHeaderTableNode },
                     this.createTableColGroup(details),
@@ -101,7 +126,8 @@ export default defineClassComponent({
                     h('table.sc-DataTable-bodyTable',
                         { ref: this.setBodyTableNode },
                         this.createTableColGroup(details),
-                        this.createTableBody(details))))
+                        this.createTableBody(details))),
+                below)
         );
     },
 

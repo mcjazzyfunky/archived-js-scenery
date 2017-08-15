@@ -149,6 +149,7 @@ body {
 .sc-DataTable-headerTable {
     width: 100% !important;
     margin: 0;
+    height: 0;
 }
 
 .sc-DataTable-bodyTable {
@@ -224,7 +225,9 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
  --------------------------*/
 
 .sc-DataNavigator {
-    position: relative;
+    height: 100%;
+    width: 100%;
+    display: block;
 }
 
 .sc-DataNavigator-toolbar {
@@ -233,7 +236,6 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     border: none; 
     border-radius: 2px;
     background: none;
-    margin-top: 20px;
     margin-bottom: 1px;
     position: relative;
     top: 0;
