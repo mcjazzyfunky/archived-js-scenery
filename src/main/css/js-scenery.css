@@ -424,3 +424,21 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     padding: 3px !important;
 }
 */
+
+
+/*--------------------------
+  VerticalLayout 
+ --------------------------*/
+.sc-VerticalLayout {
+    display: table;
+    border: 1px solid green;
+}
+
+.sc-VerticalLayout-row {
+    display: table-row;
+}
+
+.sc-VerticalLayout-cell {
+    display: table-cell;
+    border: 1px solid red;
+}
