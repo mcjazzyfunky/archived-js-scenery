@@ -220,7 +220,7 @@ export default defineClassComponent({
     render() {
         return h('div',
             { style: { height: '400px', width: '800px', xborder: '1px solid green' }},
-            //DataTable({ contentAbove: h('div', 'Juhu'), contentBelow: h('div', 'Woohoo'), config: { columns: config.columns}, data: data.slice(1, 10) }));
+            // DataTable({ contentAbove: h('div', 'Juhu'), contentBelow: h('div', 'Woohoo'), config: { columns: config.columns}, data: data.slice(1, 10) }));
             DataNavigator({ config, loadData }));
     }
 });
