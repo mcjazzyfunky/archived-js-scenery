@@ -30,7 +30,12 @@ export default defineFunctionalComponent({
                 Spec.shape({
                     content: Spec.any,
                     flex: Spec.optional(Spec.nonnegativeInteger),
-                    className: Spec.optional(Spec.string)
+                    className: Spec.optional(Spec.string),
+                    align: Spec.optional(
+                        Spec.oneOf('left', 'center', 'right')),
+                    
+                    valign: Spec.optional(
+                        Spec.oneOf('top', 'middle', 'bottom'))
                 }))
         }
     },
@@ -51,12 +56,15 @@ console.log('>>>', sumFlex);
                     const
                         flex = cell.flex === undefined ? 1 : cell.flex,
                         height = Math.floor(100 * flex / sumFlex) + '%',
+                        textAlign = cell.align === undefined ? 'auto' : cell.align,
+                        verticalAlign = cell.valign === undefined ? 'auto' : cell.valign,
                         className = cell.className;
 
                     return (
                         h('.sc-VerticalLayout-row',
                             { key, className, style: { height } },
                             h('.sc-VerticalLayout-cell',
+                                { style: { textAlign, verticalAlign } },
                                 cell.content))
                     );
                 }))

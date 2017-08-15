@@ -438,6 +438,11 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     display: table-row;
 }
 
+.boxed {
+    border: 2px solid yellow;
+    display: inline-block;
+}
+
 .sc-VerticalLayout-cell {
     display: table-cell;
     border: 1px solid red;
