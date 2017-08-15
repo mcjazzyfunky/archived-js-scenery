@@ -377,7 +377,7 @@ col.calcWidth = width;
         this._bodyTableNode = node;
     },
 
-    adjustTableWidths() {
+    adjustTableWidths() {return; // TODO
         if (this._headerTableNode && this._bodyTableNode) {
             const firstRow = this._bodyTableNode.childNodes[1].firstChild;
 
