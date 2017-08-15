@@ -66,6 +66,22 @@ export default defineClassComponent({
         }
     },
 
+    constructor() {
+        this._intervalId = null;
+        this._headerTableNode = null;
+        this._bodyTableNode = null;
+        this._columnWidths = [];
+    },
+
+    onDidMount() {
+        this.adjustTableWidths();
+        this._intervalId = setInterval(() => this.adjustTableWidths(), 1000);
+    },
+
+    onWillUnmount() {
+        clearInterval(this._intervalId);
+    },
+
     render() {
         const
             props = this.props,
@@ -77,18 +93,15 @@ export default defineClassComponent({
        
         return (
             h('.sc-DataTable',
-                { style: { position: 'relative', display: 'grid', height: '100%' } },
                 h('table.sc-DataTable-headerTable',
+                    { ref: this.setHeaderTableNode },
                     this.createTableColGroup(details),
                     this.createTableHeader(details)),
                 h('.sc-DataTable-scrollpane',
-                    { style: { overflow: 'auto', width: '100%', border: '1px solid red' } },
-                    h('table',
-                    { style: { width: '100%' } },
-                    this.createTableColGroup(details),
-                    this.createTableHeader(details),
-                    this.createTableBody(details)))
-                )
+                    h('table.sc-DataTable-bodyTable',
+                        { ref: this.setBodyTableNode },
+                        this.createTableColGroup(details),
+                        this.createTableBody(details))))
         );
     },
 
@@ -294,6 +307,57 @@ col.calcWidth = width;
                         ? 'desc'
                         : 'asc'
             });
+        }
+    },
+
+    setHeaderTableNode(node) {
+        this._headerTableNode = node;
+    },
+
+    setBodyTableNode(node) {
+        this._bodyTableNode = node;
+    },
+
+    adjustTableWidths() {
+        if (this._headerTableNode && this._bodyTableNode) {
+            const firstRow = this._bodyTableNode.childNodes[1].firstChild;
+
+            if (firstRow) {
+                let widthsHaveChanged = false;
+
+                const
+                    columns = firstRow.children,
+                    columnCount = columns.length;
+
+                for (let i = 0; i < columnCount; ++i) {
+                    const columnWidth = columns[i].clientWidth;
+
+                    if (columnWidth !== this._columnWidths[i]) {
+                        this._columnWidths[i] = columnWidth;
+                        widthsHaveChanged = true;
+                    }
+                }
+
+                if (widthsHaveChanged) {
+                    const
+                        totalWidth = this._headerTableNode.children[1].clientWidth,
+                        cols = this._headerTableNode.firstChild.children;
+
+                    let sumWidths = 0;
+    
+                    for (let i = 0; i < this._columnWidths.length; ++i) {
+                        let width = this._columnWidths[i];
+
+                        if (i < this._columnWidths.length - 1) {
+                            cols[i].style.width = width + 'px';
+                        } else {
+                            cols[i].style.width = (totalWidth - sumWidths - 1) + 'px';
+                        }
+                        
+                        sumWidths += width;
+                    }
+                }
+            }
         }
     }
 });

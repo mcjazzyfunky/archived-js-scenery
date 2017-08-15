@@ -219,7 +219,7 @@ export default defineClassComponent({
 
     render() {
         return h('div',
-            { style: { height: '200px', width: '800px', border: '1px solid green' }},
+            { style: { height: '200px', width: '800px', xborder: '1px solid green' }},
             DataTable({ config: { columns: config.columns}, data: data.slice(1, 10) }));
             //DataNavigator({ config, loadData }));
     }
