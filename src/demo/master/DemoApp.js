@@ -15,7 +15,7 @@ export default defineClassComponent({
     render() {
         return (
             h('div',
-                SceneOfLayouts())
+                SceneOfDataTables())
         );
     }
 });

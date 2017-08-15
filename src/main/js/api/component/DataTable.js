@@ -1,4 +1,5 @@
 import DataTableUtils from '../../internal/util/DataTableUtils';
+import VerticalLayout from '../../api/layout/VerticalLayout';
 
 import {
     createElement as h,
@@ -65,7 +66,6 @@ export default defineClassComponent({
             defaultValue: null
         },
 
-
         contentBelow: {
             type: Object,
             nullable: true,
@@ -116,6 +116,38 @@ export default defineClassComponent({
                     : h('div', props.contentBelow);
 
         return (
+            VerticalLayout({
+                className: 'sc-DataTable',
+                
+                cells: [
+                    {
+                        content: above,
+                        flex: 0
+                    },
+                    {
+                        content:
+                            h('table.sc-DataTable-headerTable',
+                                { ref: this.setHeaderTableNode },
+                                this.createTableColGroup(details),
+                                this.createTableHeader(details)),
+                        
+                        flex: 0
+                    },
+                    {
+                        content:
+                            h('.sc-DataTable-scrollpane',
+                                h('table.sc-DataTable-bodyTable',
+                                    { ref: this.setBodyTableNode },
+                                    this.createTableColGroup(details),
+                                    this.createTableBody(details))),
+                    },
+                    {
+                        content: below,
+                        flex: 0
+                    }
+                ]
+            })
+            /*
             h('.sc-DataTable',
                 above,
                 h('table.sc-DataTable-headerTable',
@@ -128,6 +160,7 @@ export default defineClassComponent({
                         this.createTableColGroup(details),
                         this.createTableBody(details))),
                 below)
+            */
         );
     },
 

@@ -11,6 +11,12 @@ export default defineFunctionalComponent({
     displayName: 'VerticalLayout',
 
     properties: {
+        className: {
+            type: String,
+            nullable: true,
+            defaultValue: null
+        },
+
         width: {
             type: String,
             nullable: true,
@@ -48,7 +54,7 @@ export default defineFunctionalComponent({
 
             sumFlex += flex === undefined ? 1 : flex;
         });
-console.log('>>>', sumFlex);
+
         return (
             h('.sc-VerticalLayout',
                 { style: { width: props.width, height: props.height } },
@@ -64,7 +70,7 @@ console.log('>>>', sumFlex);
                         h('.sc-VerticalLayout-row',
                             { key, className, style: { height } },
                             h('.sc-VerticalLayout-cell',
-                                { style: { textAlign, verticalAlign } },
+                                { style: { textAlign, verticalAlign, height } },
                                 cell.content))
                     );
                 }))

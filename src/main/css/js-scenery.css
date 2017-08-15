@@ -111,15 +111,18 @@ body {
 
 .sc-DataTable {
     position: relative;
-    height: 100%;
-    display: grid;
+    height: inherit;
 }
 
 
 .sc-DataTable-scrollpane {
     overflow: auto;
+    height: 100%;
+    width: 100%;
     border: 0 solid #d9d9d9;
     border-width: 0 1px 1px 1px;
+    position: absolute;
+    box-sizing: border-box;
 }
 
 .sc-DataTable-headerTable {
@@ -145,7 +148,7 @@ body {
 }
 
 .sc-DataTable-headerTable {
-    width: 100% !important;
+    width: 100%;
     margin: 0;
     height: 0;
 }
@@ -431,19 +434,15 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
  --------------------------*/
 .sc-VerticalLayout {
     display: table;
-    border: 1px solid green;
+    position: relative;
 }
 
 .sc-VerticalLayout-row {
     display: table-row;
 }
 
-.boxed {
-    border: 2px solid yellow;
-    display: inline-block;
-}
-
 .sc-VerticalLayout-cell {
     display: table-cell;
-    border: 1px solid red;
+    height: auto !important;
+    position: relative;
 }
