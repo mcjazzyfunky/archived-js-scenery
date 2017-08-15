@@ -226,18 +226,19 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     height: 100%;
     width: 100%;
     display: block;
+    position: relative;
 }
 
 .sc-DataNavigator-toolbar {
-    padding: 0.8em 0 0 0;
+    padding: 0 0 0 0;
     margin-bottom: 1em;
-    border: none; 
-    border-radius: 2px;
     background: none;
-    margin-bottom: 1px;
+    margin-bottom: 0px;
     position: relative;
     top: 0;
     left: 0;
+    border: 0 solid grey;
+    border-bottom-width: 1px;
 }
 
 .sc-DataNavigator-toolbar .sc-Menu {
@@ -286,11 +287,6 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     display: inline-block;
     margin: 0 1em 0 0.5em;
     vertical-align: top;
-}
-
-.sc-DataNavigator-toolbar {
-    border: 0 solid grey;
-    border-bottom-width: 2px;
 }
 
 .sc-DataNavigator-footer {
