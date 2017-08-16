@@ -87,6 +87,7 @@ export default defineClassComponent({
     },
 
     constructor() {
+        this._details = null;
         this._intervalId = null;
         this._headerTableNode = null;
         this._bodyTableNode = null;
@@ -94,6 +95,23 @@ export default defineClassComponent({
         this._selectedRows = {};
         this._selection = [];
         this._expandedRows = {};
+        this._expandedRowCount = 0;
+    },
+
+    updateDetails() {
+        const
+            props = this.props,
+            config = props.config,
+            data = props.data,
+            dataOffset = props.dataOffset,
+            sorting = props.sorting || null;
+            
+        this._details =
+            DataTableUtils.prepareDataTableDetails(config, data, dataOffset, sorting);
+    },
+
+    onWillMount() {
+        this.updateDetails();
     },
 
     onDidMount() {
@@ -105,14 +123,14 @@ export default defineClassComponent({
         clearInterval(this._intervalId);
     },
 
+    onWillUpdate() {
+        this.updateDetails();
+    },
+
     render() {
         const
             props = this.props,
-            config = props.config,
-            data = props.data,
-            dataOffset = props.dataOffset,
-            sorting = props.sorting || null,
-            details = DataTableUtils.prepareDataTableDetails(config, data, dataOffset, sorting);
+            details = this._details;
        
         const
             above =
@@ -157,38 +175,26 @@ export default defineClassComponent({
                     }
                 ]
             })
-            /*
-            h('.sc-DataTable',
-                above,
-                h('table.sc-DataTable-headerTable',
-                    { ref: this.setHeaderTableNode },
-                    this.createTableColGroup(details),
-                    this.createTableHeader(details)),
-                h('.sc-DataTable-scrollpane',
-                    h('table.sc-DataTable-bodyTable',
-                        { ref: this.setBodyTableNode },
-                        this.createTableColGroup(details),
-                        this.createTableBody(details))),
-                below)
-            */
         );
     },
 
     // ------------------------------------------------------------------
 
     createTableColGroup(details) {
-        const cols = [];
+        const
+            cols = [],
+            className = 'sc-DataTable-extraColumn';
 
         if (details.showRecordNumbers) {
-            cols.push(h('col', { style: { width: '50px' } }));
+            cols.push(h('col', { className, style: { width: '50px' } }));
         }
 
         if (details.selectionMode !== 'none') {
-            cols.push(h('col', { style: { width: '50px' } }));
+            cols.push(h('col', { className, style: { width: '50px' } }));
         }
 
         if (details.hasExpandableRows) {
-            cols.push(h('col', { style: { width: '50px' } }));
+            cols.push(h('col', { className, style: { width: '50px' } }));
         }
 
         for (const col of details.columns) {
@@ -257,7 +263,11 @@ col.calcWidth = width;
         }
 
         if (details.hasExpandableRows) {
-            addits.push(h('th', this.createRowExpander(-1)));
+            if (idx === 0 && numHeaderRows > 1) {
+                addits.push(h('th', { rowSpan: numHeaderRows - 1}));
+            } else {
+                addits.push(h('th', this.createRowExpander(-1, details)));
+            }
         }
 
         if (details.hasActions) {
@@ -385,7 +395,7 @@ col.calcWidth = width;
             if (details.expandableRows[idx] !== undefined) {
                 addits.push(
                     h('td',
-                        this.createRowExpander(idx)));
+                        this.createRowExpander(idx, details)));
             } else {
                 addits.push(h('td'));
             }
@@ -442,10 +452,13 @@ col.calcWidth = width;
             });
     },
 
-    createRowExpander(idx) {
+    createRowExpander(idx, details) {
         const
-            expanded = this._expandedRows[idx] !== undefined,
-    
+            expanded =
+                idx !== -1    
+                    ? this._expandedRows[idx] !== undefined
+                    : this._expandedRowCount === details.expandableRowCount,
+
             className = expanded
                 ? 'sc-DataTable-rowExpander fa fa-minus-square-o'
                 : 'sc-DataTable-rowExpander fa fa-plus-square-o',
@@ -459,7 +472,7 @@ col.calcWidth = width;
                 'data-index': idx,
                 'data-expanded': expanded ? 1 : 0
             });
-},
+    },
 
     createActionButtonGroup(rec, details) {
         return h('div',
@@ -542,18 +555,36 @@ col.calcWidth = width;
     onRowExpansionToggle(ev) {
         const
             target = ev.target,
-            idx = target.getAttribute('data-index');
+            idx = Number.parseInt(target.getAttribute('data-index'), 10);
 
-        if (this._expandedRows[idx] !== undefined) {
-            delete(this._expandedRows[idx]);
+        if (idx !== -1) {
+            if (this._expandedRows[idx] !== undefined) {
+                delete(this._expandedRows[idx]);
+                --this._expandedRowCount;
+            } else {
+                this._expandedRows[idx] = true;
+                ++this._expandedRowCount;
+            }
         } else {
-            this._expandedRows[idx] = true;
+            this._expandedRows = {};
+           
+            if (this._expandedRowCount === this._details.expandableRowCount) {
+                this._expandedRowCount = 0;
+            } else {
+                const idxs = Object.keys(this._details.expandableRows);
+
+                for (let i = 0; i < idxs.length; ++i) {
+                    this._expandedRows[idxs[i]] = true;
+                }
+
+                this._expandedRowCount = idxs.length;
+            }
         }
 
         this.refresh();
     },
 
-    adjustTableWidths() {return; // TODO
+    adjustTableWidths() {
         if (this._headerTableNode && this._bodyTableNode) {
             const firstRow = this._bodyTableNode.childNodes[1].firstChild;
 

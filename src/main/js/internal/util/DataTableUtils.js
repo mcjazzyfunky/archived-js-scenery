@@ -4,7 +4,7 @@ export default {
             headers: [],
             columns: [],
             expandableRows: {},
-            hasExpandableRows: false,
+            expandableRowCount: 0,
             showRecordNumbers: !!config.showRecordNumbers,
             dataOffset,
             sorting,
@@ -33,10 +33,12 @@ export default {
 
                 if (content !== undefined && content !== null) {
                     result.expandableRows[i] = content;
-                    result.hasExpandableRows = true;
+                    ++result.expandableRowCount;
                 }
             }
         }
+
+        result.hasExpandableRows = result.expandableRowCount > 0;
 
         result.additionalColumnCount =
             0 + result.showRecordNumbers

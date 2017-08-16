@@ -26,8 +26,8 @@ System.config({
             presets: ['es2017']
         },
         'js-surface': {
-            //deps: ['js-spec', 'preact']
-            deps: ['js-spec', 'react', 'react-dom']
+            deps: ['js-spec', 'preact']
+            //deps: ['js-spec', 'react', 'react-dom']
         }
     },
 
@@ -49,7 +49,7 @@ System.config({
 
         'js-spec': 'node_modules/js-spec/dist/js-spec.min.js',
 
-        'js-surface': 'node_modules/js-surface/dist/react-dom.js',
+        'js-surface': 'node_modules/js-surface/dist/preact.js',
         'js-essential': 'node_modules/js-essential/dist/js-essential/js-essential.js'
     }
 });

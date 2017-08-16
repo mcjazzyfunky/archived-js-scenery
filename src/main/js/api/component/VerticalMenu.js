@@ -48,7 +48,7 @@ export default defineClassComponent({
     
     construct() {
         
-    }
+    },
 
     render() {
 
