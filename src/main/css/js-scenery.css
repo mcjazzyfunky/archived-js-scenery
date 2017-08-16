@@ -208,6 +208,7 @@
     border-color: #e2e2e2;
     text-overflow: ellipsis;
     overflow: hidden;
+    vertical-align: top;
 }
 
 .sc-DataTable-bodyTable > tbody > tr > td:first-child {
@@ -224,6 +225,15 @@
 
 .sc-DataTable-bodyRow--selected {
     background-color: rgb(255, 239, 187);
+}
+
+.sc-DataTable-bodyRow--expanded > td {
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.sc-DataTable-bodyRow--expansion > td {
+    border-left-width: 0 !important;
 }
 
 .sc-DataTable-sortableColumnHeader {
@@ -266,6 +276,40 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     visibility: visible;
     -webkit-appearance: checkbox !important;
 }
+
+.sc-DataTable-rowSelector {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 3px;
+    margin: 0;
+    font-size: 18px;
+    width: 22px;
+    overflow: hidden;
+    opacity: 0.6;
+}
+
+.sc-DataTable-rowSelector:focus {
+    opacity: 0.9;
+}
+
+.sc-DataTable-rowExpander {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 3px;
+    margin: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    overflow: hidden;
+    opacity: 0.6;
+}
+
+.sc-DataTable-rowExpander:focus {
+    opacity: 0.9;
+}
+
 
 /*--------------------------
   DataNavigator 
@@ -438,6 +482,7 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     padding: 1px 8px;
     margin-top: 1em;
 }
+
 
 
 /*

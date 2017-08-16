@@ -254,10 +254,10 @@ export default defineClassComponent({
 
     createActionMenus(actions) {
         const ret = [];
-
+console.log("createActionMenus")
         for (const action of actions) {
             const
-                menuConfig = { text: action.text, icon: action.icon },
+                menuConfig = { text: action.text, icon: action.icon, disabled: false },
                 items = [menuConfig];
 
             if (action.actions) {

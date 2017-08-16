@@ -27,7 +27,14 @@ const tableConfigSpec =
                 )),
 
         showRecordNumbers:
-            Spec.optional(Spec.boolean)
+            Spec.optional(Spec.boolean),
+
+        expandableRow:
+            Spec.optional(
+                Spec.shape({
+                    getContent:
+                        Spec.function
+                }))
     });
 
 export default defineClassComponent({
@@ -86,6 +93,7 @@ export default defineClassComponent({
         this._columnWidths = [];
         this._selectedRows = {};
         this._selection = [];
+        this._expandedRows = {};
     },
 
     onDidMount() {
@@ -179,6 +187,10 @@ export default defineClassComponent({
             cols.push(h('col', { style: { width: '50px' } }));
         }
 
+        if (details.hasExpandableRows) {
+            cols.push(h('col', { style: { width: '50px' } }));
+        }
+
         for (const col of details.columns) {
             const width =
                 col.width.endsWith('*')    
@@ -228,20 +240,24 @@ col.calcWidth = width;
                 addits.push(h('th', { rowSpan: numHeaderRows - 1 }));
             } else if (details.selectionMode === 'multi') {
                 const
-                    selectionCount = this._selection.length,    
-                    checked = selectionCount && selectionCount
-                        === this.props.data.length;
+                    selectionCount = this._selection.length,
+                    dataLength = this.props.data.length,    
+                    allSelected = dataLength > 0 
+                        && selectionCount === this.props.data.length;
 
                 addits.push(
                     h('th',
-                        h('div.sc-CheckBox',
-                            h('input[type=checkbox].sc-CheckBox-input',
-                                { checked, onChange: this.onFullSelectionToggled }),
-                            h('label.sc-CheckBox-label'))));
+                        this.createRowSelector(-1,
+                            allSelected,
+                            this.onFullSelectionToggled)));
             } else {
                 addits.push(
                     h('th'));
             }
+        }
+
+        if (details.hasExpandableRows) {
+            addits.push(h('th', this.createRowExpander(-1)));
         }
 
         if (details.hasActions) {
@@ -298,12 +314,49 @@ col.calcWidth = width;
     },
 
     createTableBody(details) {
-        const recs = Seq.from(details.data);
+        const
+            data = details.data,
+            hasExpandableRows = details.hasExpandableRows,
+            rows = [];
+
+        for (let i = 0; i < data.length; ++i) {
+            rows.push(this.createTableBodyRow(data[i], i, details));
+
+            if (hasExpandableRows && this._expandedRows[i]) {
+                const expandableContent = details.expandableRows[i];
+
+                if (expandableContent !== undefined) {
+                    let className = 'sc-DataTable-bodyRow sc-DataTable-bodyRow--expansion';
+
+                    if (i % 2 === 1) {
+                        className += ' sc-DataTable-bodyRow--alt';
+                    }
+
+                    if (this._selectedRows[i] !== undefined) {
+                        className += ' sc-DataTable-bodyRow--selected';
+                    }
+
+                    rows.push(
+                        h('tr',
+                            { className},
+                            h('td',
+                                {
+                                    colSpan:
+                                        1 + details.showRecordNumbers
+                                        + (details.selectionMode !== 'none')
+                                }),
+                            h('td',
+                                {
+                                    colSpan: details.columns.length
+                                },
+                                expandableContent)));
+                }
+            }
+        }
+
 
         return (
-            h('tbody',
-                recs.map((rec, idx) =>
-                    this.createTableBodyRow(rec, idx, details)))  
+            h('tbody', rows)
         );
     },
 
@@ -320,18 +373,22 @@ col.calcWidth = width;
 
         if (details.selectionMode === 'multi') {
             addits.push(
-                h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned > div.sc-CheckBox',
-                    h('input[type=checkbox].sc-CheckBox-input',
-                        {
-                            checked,
-                            'data-index': idx,
-                            onClick: this.onRowSelectionToggle
-                        }),
-                    h('label.sc-CheckBox-label', '')));
+                h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned',
+                    this.createRowSelector(idx, !!this._selectedRows[idx], this.onRowSelectionToggle)));
         } else if (details.selectionMode === 'single') {
             addits.push(
                 h('td',
                     h('input[type=radio].ui.radio')));
+        }
+
+        if (details.hasExpandableRows) {
+            if (details.expandableRows[idx] !== undefined) {
+                addits.push(
+                    h('td',
+                        this.createRowExpander(idx)));
+            } else {
+                addits.push(h('td'));
+            }
         }
 
         if (details.hasActions) {
@@ -344,6 +401,10 @@ col.calcWidth = width;
 
         if (checked) {
             className += ' sc-DataTable-bodyRow--selected';
+        }
+
+        if (details.hasExpandableRows && this._expandedRows[idx] === true) {
+            className += ' sc-DataTable-bodyRow--expanded';
         }
 
         return (
@@ -364,6 +425,41 @@ col.calcWidth = width;
                 rec[column.field])
         );
     },
+
+    createRowSelector(idx, selected, onClick) {
+        const
+            className =
+                selected
+                    ? 'sc-DataTable-rowSelector fa fa-check-square-o'
+                    : 'sc-DataTable-rowSelector fa fa-square-o';
+
+        return h('button',
+            {
+                className,
+                onClick,
+                'data-index': idx,
+                'data-selected': selected ? 1 : 0
+            });
+    },
+
+    createRowExpander(idx) {
+        const
+            expanded = this._expandedRows[idx] !== undefined,
+    
+            className = expanded
+                ? 'sc-DataTable-rowExpander fa fa-minus-square-o'
+                : 'sc-DataTable-rowExpander fa fa-plus-square-o',
+
+            onClick = this.onRowExpansionToggle; 
+
+        return h('button',
+            {
+                className,
+                onClick,
+                'data-index': idx,
+                'data-expanded': expanded ? 1 : 0
+            });
+},
 
     createActionButtonGroup(rec, details) {
         return h('div',
@@ -394,14 +490,14 @@ col.calcWidth = width;
         const
             recordCount = this.props.data ? this.props.data.length : 0,
             target = ev.target,
-            checked = target.checked,
+            selected = target.getAttribute('data-selected') === '1',
             selectedRows = {},
             selection = [];
 
         this._selectedRows = selectedRows;
         this._selection = selection;
         
-        if (checked) {
+        if (!selected) {
             for (let i = 0; i < recordCount; ++i) {
                 selectedRows[i] = true;
                 selection.push(i);
@@ -424,9 +520,9 @@ col.calcWidth = width;
         const
             target = ev.target,
             index = target.getAttribute('data-index'),
-            checked = target.checked;
+            selected = target.getAttribute('data-selected') === '1';
 
-        if (checked) {
+        if (!selected) {
             this._selectedRows[index] = true;
         } else {
             delete(this._selectedRows[index]);
@@ -443,7 +539,21 @@ col.calcWidth = width;
         this.refresh();
     },
 
-    adjustTableWidths() {
+    onRowExpansionToggle(ev) {
+        const
+            target = ev.target,
+            idx = target.getAttribute('data-index');
+
+        if (this._expandedRows[idx] !== undefined) {
+            delete(this._expandedRows[idx]);
+        } else {
+            this._expandedRows[idx] = true;
+        }
+
+        this.refresh();
+    },
+
+    adjustTableWidths() {return; // TODO
         if (this._headerTableNode && this._bodyTableNode) {
             const firstRow = this._bodyTableNode.childNodes[1].firstChild;
 

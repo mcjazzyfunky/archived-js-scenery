@@ -97,8 +97,20 @@ const
                 }
             ],
 
-            showRecordNumbers: true,
-            selectionMode: 'multi'
+            //showRecordNumbers: true,
+            selectionMode: 'multi',
+
+            expandableRows: {
+                getContent(rec) {
+                    let ret = null;
+
+                    if (rec.firstName === 'Mary') {
+                        ret = h('div', 'Juhuu', h('br'), 'Juhuu');
+                    }
+
+                    return ret;
+                }
+            } 
         };
 
 const data2 = [

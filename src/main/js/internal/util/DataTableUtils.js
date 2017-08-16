@@ -3,7 +3,9 @@ export default {
         const result =  {
             headers: [],
             columns: [],
-            showRecordNumbers: config.showRecordNumbers,
+            expandableRows: {},
+            hasExpandableRows: false,
+            showRecordNumbers: !!config.showRecordNumbers,
             dataOffset,
             sorting,
 
@@ -19,6 +21,27 @@ export default {
         };
 
         walkColumnsConfig(config.columns, result);
+
+        const getExpandableRowContent =
+            config.expandableRows
+                ? config.expandableRows.getContent
+                : null;
+
+        if (data && getExpandableRowContent) {
+            for (let i = 0; i < data.length; ++i) {
+                const content = getExpandableRowContent(data[i]);
+
+                if (content !== undefined && content !== null) {
+                    result.expandableRows[i] = content;
+                    result.hasExpandableRows = true;
+                }
+            }
+        }
+
+        result.additionalColumnCount =
+            0 + result.showRecordNumbers
+            + result.selectionMode !== 'none'
+            + result.hasExpandableRows;
 
         return result;
     }

@@ -26,6 +26,7 @@ System.config({
             presets: ['es2017']
         },
         'js-surface': {
+            //deps: ['js-spec', 'preact']
             deps: ['js-spec', 'react', 'react-dom']
         }
     },
