@@ -1,4 +1,51 @@
 /*--------------------------
+  CheckBox
+ --------------------------*/
+.sc-CheckBox {
+    position: relative;
+    padding: 2px;
+}
+
+ .sc-CheckBox-input {
+    opacity: 0;
+    margin-right: 0.6em;
+    position: relative;
+    z-index: 15000;
+}
+
+.sc-CheckBox-label {
+    position: relative;
+    margin-left: 0;
+}
+
+.sc-CheckBox-label:before {
+    font-weight: normal;
+    content: "\f096";
+    xxxcontent: "\f0c8";
+
+    xxxcolor: #ddd;
+
+    font-family: FontAwesome;
+    font-size: 18px;
+    opacity: 0.7;
+    position: absolute;
+    top: 3px;
+    left: -1.2em;
+}
+
+.sc-CheckBox-input:checked + .sc-CheckBox-label:before {
+    content: "\f046";
+
+    xxxcolor: rgb(94, 155, 210);
+
+    xxxcontent: "\f14a";
+}
+
+.sc-CheckBox-input:focus + .sc-CheckBox-label:before {
+    font-weight: bold;
+}
+
+/*--------------------------
   Button
  --------------------------*/
 
@@ -173,6 +220,10 @@
 
 .sc-DataTable-bodyRow--alt {
     background-color: #fafafa;
+}
+
+.sc-DataTable-bodyRow--selected {
+    background-color: rgb(255, 239, 187);
 }
 
 .sc-DataTable-sortableColumnHeader {

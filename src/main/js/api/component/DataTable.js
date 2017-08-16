@@ -84,6 +84,8 @@ export default defineClassComponent({
         this._headerTableNode = null;
         this._bodyTableNode = null;
         this._columnWidths = [];
+        this._selectedRows = {};
+        this._selection = [];
     },
 
     onDidMount() {
@@ -225,11 +227,17 @@ col.calcWidth = width;
             if (idx === 0 && numHeaderRows > 1) {
                 addits.push(h('th', { rowSpan: numHeaderRows - 1 }));
             } else if (details.selectionMode === 'multi') {
+                const
+                    selectionCount = this._selection.length,    
+                    checked = selectionCount && selectionCount
+                        === this.props.data.length;
+
                 addits.push(
                     h('th',
-                        h('div',
-                            h('input[type=checkbox].k-checkbox'),
-                            h('label.k-checkbox-label'))));
+                        h('div.sc-CheckBox',
+                            h('input[type=checkbox].sc-CheckBox-input',
+                                { checked, onChange: this.onFullSelectionToggled }),
+                            h('label.sc-CheckBox-label'))));
             } else {
                 addits.push(
                     h('th'));
@@ -301,7 +309,8 @@ col.calcWidth = width;
 
     createTableBodyRow(rec, idx, details) {
         let addits = [],
-            tailExtra = null;
+            tailExtra = null,
+            checked = this._selectedRows[idx] === true;
         
         if (details.showRecordNumbers) {
             addits.push(
@@ -311,9 +320,14 @@ col.calcWidth = width;
 
         if (details.selectionMode === 'multi') {
             addits.push(
-                h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned',
-                    h('input[type=checkbox].k-checkbox'),
-                    h('label.k-checkbox-label', '')));
+                h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned > div.sc-CheckBox',
+                    h('input[type=checkbox].sc-CheckBox-input',
+                        {
+                            checked,
+                            'data-index': idx,
+                            onClick: this.onRowSelectionToggle
+                        }),
+                    h('label.sc-CheckBox-label', '')));
         } else if (details.selectionMode === 'single') {
             addits.push(
                 h('td',
@@ -325,9 +339,16 @@ col.calcWidth = width;
                 this.createActionButtonGroup(rec, details));
         }
 
+        let className = 
+            idx % 2 === 0 ? null : 'sc-DataTable-bodyRow--alt';
+
+        if (checked) {
+            className += ' sc-DataTable-bodyRow--selected';
+        }
+
         return (
             h('tr',
-                { className: idx % 2 === 0 ? null : 'sc-DataTable-bodyRow--alt'},
+                { className },
                 addits,
                 Seq.from(details.columns)
                     .map(column =>
@@ -369,6 +390,28 @@ col.calcWidth = width;
         }
     },
 
+    onFullSelectionToggled(ev) {
+        const
+            recordCount = this.props.data ? this.props.data.length : 0,
+            target = ev.target,
+            checked = target.checked,
+            selectedRows = {},
+            selection = [];
+
+        this._selectedRows = selectedRows;
+        this._selection = selection;
+        
+        if (checked) {
+            for (let i = 0; i < recordCount; ++i) {
+                selectedRows[i] = true;
+                selection.push(i);
+            }
+        }
+
+        Object.freeze(selection);
+        this.refresh();
+    },
+
     setHeaderTableNode(node) {
         this._headerTableNode = node;
     },
@@ -377,7 +420,30 @@ col.calcWidth = width;
         this._bodyTableNode = node;
     },
 
-    adjustTableWidths() {return; // TODO
+    onRowSelectionToggle(ev) {
+        const
+            target = ev.target,
+            index = target.getAttribute('data-index'),
+            checked = target.checked;
+
+        if (checked) {
+            this._selectedRows[index] = true;
+        } else {
+            delete(this._selectedRows[index]);
+        }
+
+        const selection =
+            Object.keys(this._selectedRows)
+                .map(key => Number.parseInt(key, 10));
+
+        selection.sort();
+        Object.freeze(selection);
+
+        this._selection = selection;
+        this.refresh();
+    },
+
+    adjustTableWidths() {
         if (this._headerTableNode && this._bodyTableNode) {
             const firstRow = this._bodyTableNode.childNodes[1].firstChild;
 

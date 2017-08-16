@@ -7,6 +7,7 @@ import { Seq } from 'js-essential';
 
 import SelectBox from '../../main/js/api/component/SelectBox';
 import TextField from '../../main/js/api/component/TextField';
+import CheckBox from '../../main/js/api/component/CheckBox';
 
 export default defineClassComponent({
     displayName: 'SceneOfFormFields',
@@ -67,7 +68,10 @@ export default defineClassComponent({
                         this.state.disabled ? 'Enable' : 'Disable' )),
                 h('div',
                     'Some text field:',
-                    TextField({ defaultValue: 'xxx'})))
+                    TextField({ defaultValue: 'xxx'})),
+                h('hr'),
+                h('div', CheckBox({ text: 'Click me'} ),
+                    h('div', CheckBox({ text: 'Yeah' } ))))
         );
     }
 });
