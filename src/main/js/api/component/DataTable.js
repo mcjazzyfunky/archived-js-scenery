@@ -79,6 +79,12 @@ export default defineClassComponent({
             defaultValue: null
         },
 
+        className: {
+            type: String,
+            nullable: true,
+            defaultValue: null
+        },
+
         onSort: {
             type: Function,
             nullable: true,
@@ -130,7 +136,12 @@ export default defineClassComponent({
     render() {
         const
             props = this.props,
-            details = this._details;
+            details = this._details,
+
+            className =
+                props.className
+                    ? 'sc-DataTable ' + props.className
+                    : 'sc-DataTable';
        
         const
             above =
@@ -145,7 +156,7 @@ export default defineClassComponent({
 
         return (
             VerticalLayout({
-                className: 'sc-DataTable',
+                className,
                 
                 cells: [
                     {
@@ -154,7 +165,7 @@ export default defineClassComponent({
                     },
                     {
                         content:
-                            h('table.sc-DataTable-headerTable',
+                            h('table.sc-DataTable-header.sc-DataTable-headerTable',
                                 { ref: this.setHeaderTableNode },
                                 this.createTableColGroup(details),
                                 this.createTableHeader(details)),

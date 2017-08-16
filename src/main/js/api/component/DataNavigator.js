@@ -14,6 +14,7 @@ import Paginator from './Paginator';
 import PageSizeSelector from './PageSizeSelector';
 import PaginationInfo from './PaginationInfo';
 import Menu from './Menu';
+import FilterBox from './FilterBox';
 
 import ComponentHelper from '../helper/ComponentHelper';
 
@@ -201,13 +202,15 @@ export default defineClassComponent({
             dataOffset = this.state.pageIndex * this.state.pageSize,
             isLoading = this.state.loadingState === 'loading',
             lockLayer = isLoading ? this.createLockPane() : null,
-            loadingBox = isLoading ? this.createLoadingBox() : null;
+            loadingBox = isLoading ? this.createLoadingBox() : null,
+            filterBox = this.createFilterBox();
 
         return h('.sc-DataNavigator',
             lockLayer,
             loadingBox,
             DataTable({
-                contentAbove: toolbar,
+                className: 'sc-DataNavigator-dataTable',
+                contentAbove: h('div', toolbar, filterBox),
                 contentBelow: footer,
                 config,
                 data,
@@ -283,6 +286,14 @@ console.log("createActionMenus")
         }
 
         return ret;
+    },
+
+    createFilterBox() {
+        return FilterBox({
+            config: {
+                filters: []
+            }
+        });
     },
 
     createPaginator(params) {

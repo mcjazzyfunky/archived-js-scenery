@@ -47,6 +47,8 @@ export default defineFunctionalComponent({
     },
 
     render(props) {
+        const className = props.className;
+
         let sumFlex = 0;
 
         Seq.from(props.cells).forEach(cell => {
@@ -57,7 +59,7 @@ export default defineFunctionalComponent({
 
         return (
             h('.sc-VerticalLayout',
-                { style: { width: props.width, height: props.height } },
+                { className, style: { width: props.width, height: props.height } },
                 Seq.from(props.cells).map((cell, key) => { 
                     const
                         flex = cell.flex === undefined ? 1 : cell.flex,

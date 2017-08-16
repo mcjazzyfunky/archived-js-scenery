@@ -334,8 +334,9 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
     position: relative;
     top: 0;
     left: 0;
-    border: 0 solid grey;
-    border-bottom-width: 1px;
+}
+.sc-DataNavigator-dataTable .sc-DataTable-header {
+    border-top: 1px solid grey;
 }
 
 .sc-DataNavigator-toolbar .sc-Menu {
@@ -544,7 +545,8 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
 /*--------------------------
   VerticalLayout 
  --------------------------*/
-.sc-VerticalLayout {
+
+ .sc-VerticalLayout {
     display: table;
     position: relative;
 }
@@ -556,4 +558,16 @@ xxx.sc-DataTable-cell input[type=checkbox].k-checkbox {
 .sc-VerticalLayout-cell {
     display: table-cell;
     position: relative;
+}
+
+/*--------------------------
+  FilterBox 
+ --------------------------*/
+
+.sc-FilterBox {
+    margin: 0.8em 1em;
+}
+
+.sc-FilterBox .sc-HorizontalLayout-cell {
+    padding: 10px;
 }
