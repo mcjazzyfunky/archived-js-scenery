@@ -412,7 +412,7 @@ col.calcWidth = width;
         if (details.hasExpandableRows) {
             if (details.expandableRows[idx] !== undefined) {
                 addits.push(
-                    h('td',
+                    h('td.sc-DataTable-cell.sc-DataTable-cell--centerAligned',
                         this.createRowExpander(idx, details)));
             } else {
                 addits.push(h('td'));
@@ -624,7 +624,7 @@ col.calcWidth = width;
 
                 if (widthsHaveChanged) {
                     const
-                        totalWidth = this._headerTableNode.children[1].getBoundingClientRect().width,
+                        totalWidth = this._headerTableNode.children[1].getBoundingClientRect().width + 0.49,
                         cols = this._headerTableNode.firstChild.children;
 
                     let sumWidths = 0;
@@ -637,7 +637,7 @@ col.calcWidth = width;
                         } else {
                             cols[i].style.width = 100 - (100 * sumWidths / totalWidth) + '%';
                         }
-                        
+
                         sumWidths += width;
                     }
                 }
