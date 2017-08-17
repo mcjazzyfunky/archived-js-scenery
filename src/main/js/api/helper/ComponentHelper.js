@@ -36,6 +36,8 @@ export default class ComponentHelper {
                 ret = `k-icon k-i-${icon.substr(2)}`;
             } else if (icon.startsWith('fa-')) {
                 ret = `fa ${icon}`;
+            } else if (icon.startsWith('mdi-')) {
+                ret = `mdi mdi-${icon}`;
             }
         }
 

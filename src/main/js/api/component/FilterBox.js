@@ -30,17 +30,30 @@ export default defineClassComponent({
     render() {
         const content =
             HorizontalLayout({
-                className: 'sc-FilterBox',
-
                 cells: [
+                    {
+                        content: h('i.mdi.mdi-filter-outline', { style: { fontSize: '14px', color: '#7a7a7a' } }),
+                        //content: h('i.fa.fa-filter', { style: { fontSize: '16px', color: '#888' } }),
+                        
+                        valign: 'top',
+                        flex: 0
+                    },
                     {
                         content:
                             h('div',
-                                h('div > label', 'Customer-No.'),
+                                h('div > label', 'Last Name'),
                                 h('div > input.k-text')),
                         
                         flex: 0
                     },
+                    {
+                        content:
+                            h('div',
+                                h('div > label', 'City'),
+                                h('div > input.k-text')),
+                        
+                        flex: 0
+                    }, 
                     {
                         content:
                             h('div',
@@ -58,6 +71,7 @@ export default defineClassComponent({
             });
 
         return h('div.sc-FilterBox',
+            { className: this.props.className },
             content);
     }
 });

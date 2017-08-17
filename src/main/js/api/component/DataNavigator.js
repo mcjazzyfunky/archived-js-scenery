@@ -241,7 +241,7 @@ export default defineClassComponent({
 
     createToolbar(config) {
         const
-            actionMenus = this.createActionMenus(config.actions),
+            actionMenus = this.createActionMenu(config.actions),
 
             headline = config.headline
                 ? h('h4.sc-DataNavigator-headline', config.headline)
@@ -255,20 +255,23 @@ export default defineClassComponent({
         ); 
     },
 
-    createActionMenus(actions) {
-        const ret = [];
-console.log("createActionMenus")
-        for (const action of actions) {
-            const
-                menuConfig = { text: action.text, icon: action.icon, disabled: false },
-                items = [menuConfig];
+    createActionMenu(actions) {
+        const
+            items = actions.map(action => {
+                    const config = {
+                        text: action.text,
+                        icon: action.icon,
+                        disabled: false
+                    };
 
-            if (action.actions) {
-                menuConfig.items = this.buildActionMenuItems(action.actions);
-            }
+                    if (action.actions) {
+                        config.items = this.buildActionMenuItems(action.actions);                
+                    }
 
-            ret.push(h('div.sc-DataNavigator-action', Menu({ items })));
-        }
+                    return config;
+                }),
+
+            ret = h('div.sc-DataNavigator-action', Menu({ items }));
 
         return ret;
     },
@@ -291,6 +294,7 @@ console.log("createActionMenus")
     createFilterBox() {
         return FilterBox({
             config: {
+                className: 'sc-DataNavigator-filterBox',
                 filters: []
             }
         });

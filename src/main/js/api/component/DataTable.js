@@ -122,11 +122,13 @@ export default defineClassComponent({
 
     onDidMount() {
         this.adjustTableWidths();
-        this._intervalId = setInterval(() => this.adjustTableWidths(), 1000);
+        this._intervalId = setInterval(() => this.adjustTableWidths(), 500);
+        window.addEventListener('resize', this.adjustTableWidths);
     },
 
     onWillUnmount() {
         clearInterval(this._intervalId);
+        window.removeEventListener('resize', this.adjustTableWidths);
     },
 
     onWillUpdate() {
@@ -164,20 +166,25 @@ export default defineClassComponent({
                         flex: 0
                     },
                     {
+                        className: 'x',
+
                         content:
-                            h('table.sc-DataTable-header.sc-DataTable-headerTable',
+                            h('table.sc-DataTable-table.sc-DataTable-header.sc-DataTable-headerTable',
                                 { ref: this.setHeaderTableNode },
                                 this.createTableColGroup(details),
-                                this.createTableHeader(details)),
+                                this.createTableHead(details)),
                         
                         flex: 0
                     },
                     {
+                        className: 'y',
+
                         content:
                             h('.sc-DataTable-scrollpane',
-                                h('table.sc-DataTable-bodyTable',
+                                h('table.sc-DataTable-table.sc-DataTable-bodyTable',
                                     { ref: this.setBodyTableNode },
                                     this.createTableColGroup(details),
+                                    //this.createTableHead(details),
                                     this.createTableBody(details))),
                     },
                     {
@@ -225,17 +232,17 @@ col.calcWidth = width;
         );
     },
 
-    createTableHeader(details) {
+    createTableHead(details) {
         const ret =
             h('thead',
                 Seq.from(details.headers)
                     .map((headerRow, idx) =>
-                        this.createTableHeaderRow(headerRow, idx, details)));
+                        this.createTableHeadRow(headerRow, idx, details)));
 
         return ret;
     },
 
-    createTableHeaderRow(headerRow, idx, details) {
+    createTableHeadRow(headerRow, idx, details) {
         let
             addits = [],
             tailExtra = null;
@@ -248,7 +255,7 @@ col.calcWidth = width;
                     h('th',
                         { rowSpan: numHeaderRows - 1 }));
             } else {
-                addits.push(h('th', ''));
+                addits.push(h('th'));
             }
         }
 
@@ -294,13 +301,13 @@ col.calcWidth = width;
                 addits,
                 Seq.from(headerRow)
                     .map(headerCell =>
-                        this.createTableHeaderCell(headerCell, details)),
+                        this.createTableHeadCell(headerCell, details)),
                 tailExtra)
         );
 
     },
 
-    createTableHeaderCell(cell, details) {
+    createTableHeadCell(cell, details) {
         const onClick = cell.sortable
             ? this.onSortableHeaderClick
             : null;
@@ -607,7 +614,7 @@ col.calcWidth = width;
                     columnCount = columns.length;
 
                 for (let i = 0; i < columnCount; ++i) {
-                    const columnWidth = columns[i].clientWidth;
+                    const columnWidth = columns[i].getBoundingClientRect().width;
 
                     if (columnWidth !== this._columnWidths[i]) {
                         this._columnWidths[i] = columnWidth;
@@ -617,7 +624,7 @@ col.calcWidth = width;
 
                 if (widthsHaveChanged) {
                     const
-                        totalWidth = this._headerTableNode.children[1].clientWidth,
+                        totalWidth = this._headerTableNode.children[1].getBoundingClientRect().width,
                         cols = this._headerTableNode.firstChild.children;
 
                     let sumWidths = 0;
@@ -626,9 +633,9 @@ col.calcWidth = width;
                         let width = this._columnWidths[i];
 
                         if (i < this._columnWidths.length - 1) {
-                            cols[i].style.width = width + 'px';
+                            cols[i].style.width = (width * 100 / totalWidth) + '%';
                         } else {
-                            cols[i].style.width = (totalWidth - sumWidths - 1) + 'px';
+                            cols[i].style.width = 100 - (100 * sumWidths / totalWidth) + '%';
                         }
                         
                         sumWidths += width;

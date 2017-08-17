@@ -14,22 +14,23 @@ const
             actions: [
                 {
                     type: 'general',
-                    text: 'New',
+                    text: ' New',
                     icon: 'k-plus'
                 },
                 {   
                     type: 'single-row',
-                    text: 'View',
+                    text: ' View',
                     icon: 'k-file-txt'
                 },
                 {
                     type: 'single-row',
-                    text: 'Delete',
+                    text: ' Delete',
                     icon: 'k-delete'
                 },
                 {
                     type: 'menu',
-                    text: 'Export',
+                    text: ' Export',
+                    icon: 'fa-file-o ',
 
                     actions: [
                         {
