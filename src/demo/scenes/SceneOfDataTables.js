@@ -98,7 +98,7 @@ const
                 }
             ],
 
-            showRecordNumbers: true,
+            //showRecordNumbers: true,
             selectionMode: 'multi',
 
             expandableRows: {

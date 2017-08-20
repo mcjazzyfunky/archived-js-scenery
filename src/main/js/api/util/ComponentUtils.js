@@ -1,7 +1,7 @@
 import { Strings } from 'js-essential';
 import { createElement as h } from 'js-surface';
 
-export default class ComponentHelper {
+export default class ComponentUtils {
     static buildClass(...tokens) {
         let ret = '';
 
@@ -14,7 +14,7 @@ export default class ComponentHelper {
                 ret += token;
             } else if (token instanceof Array) {
                 for (let subtoken of token) {
-                    let subCssClass = ComponentHelper.buildClass(subtoken);
+                    let subCssClass = ComponentUtils.buildClass(subtoken);
 
                     if (ret.length > 0) {
                         ret += ' ';
@@ -48,17 +48,17 @@ export default class ComponentHelper {
         let ret = null;
 
         icon = Strings.trimToNull(icon);
-        className = ComponentHelper.buildClass(className);
+        className = ComponentUtils.buildClass(className);
 
         if (icon !== null) {
             if (icon.startsWith('fa-')) {
                 const fullClassName =
-                    `${className} ${ComponentHelper.buildIconClass(icon)}`;
+                    `${className} ${ComponentUtils.buildIconClass(icon)}`;
 
                 ret = h('i', { className: fullClassName, style });
             } else if (icon.startsWith('k-')) {
                 const fullClassName =
-                    `k-icon ${className} ${ComponentHelper.buildIconClass(icon)}`;
+                    `k-icon ${className} ${ComponentUtils.buildIconClass(icon)}`;
 
                 ret = h('i', { className: fullClassName, style });
             } else {

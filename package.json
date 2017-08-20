@@ -17,9 +17,6 @@
     "inferno-component": "^3.6.4",
     "inferno-create-element": "^3.6.4",
     "jquery": "^3.2.1",
-    "js-essential": "^0.1.2",
-    "js-spec": "^0.1.14",
-    "js-surface": "^0.1.18",
     "kendo-ui-core": "^2017.2.621",
     "material-design-icons": "^3.0.1",
     "material-icons": "^0.1.0",
@@ -50,6 +47,9 @@
     "all": "npm run compress && npm run test && npm run docs && \"node_modules/.bin/shx\" echo Finished successfully."
   },
   "dependencies": {
-    "font-awesome": "^4.7.0"
+    "font-awesome": "^4.7.0",
+    "js-essential": "^0.1.2",
+    "js-spec": "^0.1.16",
+    "js-surface": "^0.1.22"
   }
 }

@@ -14,9 +14,10 @@ import Paginator from './Paginator';
 import PageSizeSelector from './PageSizeSelector';
 import PaginationInfo from './PaginationInfo';
 import Menu from './Menu';
-import FilterBox from './FilterBox';
+import HorizontalLayout from '../layout/HorizontalLayout';
+//import FilterBox from './FilterBox';
 
-import ComponentHelper from '../helper/ComponentHelper';
+import ComponentUtils from '../util/ComponentUtils';
 
 const
     actionSpec =
@@ -37,9 +38,10 @@ const
         ),    
 
     dataNavSpec = Spec.shape({
+        headline: Spec.optional(Spec.string),
         actions: actionSpec,
         columns: Spec.array,
-        headline: Spec.optional(Spec.string)
+        filtering: Spec.optional(Spec.object)
     });
 
 export default defineClassComponent({
@@ -84,7 +86,7 @@ export default defineClassComponent({
     modifyState(modifications) {
         this.state = Object.assign({}, this.state, modifications);
 
-        this.refresh(); // TODO
+        this.forceUpdate(); // TODO
     },
 
     moveToPage(pageIndex) {
@@ -295,7 +297,42 @@ export default defineClassComponent({
         return FilterBox({
             config: {
                 className: 'sc-DataNavigator-filterBox',
-                filters: []
+                sections: [
+                    {
+                        filters: [
+                            {
+                                caption: 'Last Name',
+                                field: 'lastName',
+                                type: 'textField'
+                            },
+                            {
+                                caption: 'Postal Code',
+                                field: 'postalCode',
+                                type: 'textField'
+                            },
+                            {
+                                caption: 'City',
+                                field: 'city',
+                                type: 'textField'
+                            },
+                            {
+                                caption: 'Last Name',
+                                field: 'lastName',
+                                type: 'textField'
+                            },
+                            {
+                                caption: 'Postal Code',
+                                field: 'postalCode',
+                                type: 'textField'
+                            },
+                            {
+                                caption: 'City',
+                                field: 'city',
+                                type: 'textField'
+                            }
+                        ]
+                    }
+                ]
             }
         });
     },
@@ -362,3 +399,59 @@ export default defineClassComponent({
         );
     }
 });
+
+const FilterBox = defineClassComponent({
+    displayName: 'DataNavigator_FilterBox',
+
+    properties: ['config'],
+
+    render() {
+        const
+            props = this.props,
+            
+            filters =
+               Seq.from(props.config.sections[0].filters)
+                   .filter(filter => filter.ignore != true)
+                   .toArray(),
+
+            maxFiltersPerColumn = Math.ceil(filters.length / 3),
+
+            columns = [];
+
+        let currColumn = null;
+
+        for (let i = 0; i < filters.length; ++i) {
+            if (i % maxFiltersPerColumn === 0) {
+                currColumn = [];
+                columns.push(currColumn);
+            }
+
+            currColumn.push(filters[i]);
+        }
+
+
+        console.log(columns);
+
+        const filterColumns = (
+            h('.sc-DataNavigator-filterColumns',
+                Seq.from(columns).map(column =>
+                    h('.sc-DataNavigator-filterColumn',
+                        Seq.from(column).map(filter =>
+                            createFilter(filter))))));
+
+        return h('div.sc-DataNavigator-filterBox',
+            filterColumns);
+    }
+});
+
+function createFilter({ caption, type }) {
+    const
+        label = h('label.sc-DataNavigator-filterLabel', caption),
+        component = h('input[type=text]');
+
+    return (
+        h('div.sc-DataNavigator-filter',
+            label,
+            component)
+    );
+}

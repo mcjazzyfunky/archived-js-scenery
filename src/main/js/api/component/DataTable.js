@@ -536,7 +536,7 @@ col.calcWidth = width;
         }
 
         Object.freeze(selection);
-        this.refresh();
+        this.forceUpdate();
     },
 
     setHeaderTableNode(node) {
@@ -567,7 +567,7 @@ col.calcWidth = width;
         Object.freeze(selection);
 
         this._selection = selection;
-        this.refresh();
+        this.forceUpdate();
     },
 
     onRowExpansionToggle(ev) {
@@ -599,7 +599,7 @@ col.calcWidth = width;
             }
         }
 
-        this.refresh();
+        this.forceUpdate();
     },
 
     adjustTableWidths() {

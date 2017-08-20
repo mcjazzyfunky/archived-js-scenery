@@ -6,7 +6,7 @@ import {
 import { Spec } from 'js-spec';
 
 import { Seq, Strings } from 'js-essential';
-import ComponentHelper from '../helper/ComponentHelper';
+import ComponentUtils from '../util/ComponentUtils';
 
 export default defineFunctionalComponent({
     displayName: 'Button',
@@ -88,7 +88,7 @@ export default defineFunctionalComponent({
             iconPosition = props.iconPosition,
 
             iconElement =
-                ComponentHelper.createIconElement(
+                ComponentUtils.createIconElement(
                     icon,
                     'sc-button-icon sc-icon sc-' + iconPosition,
                     props.iconPosition === 'left' ? null : { margin: '0 0 5px 0'}),
@@ -131,7 +131,7 @@ export default defineFunctionalComponent({
             sizeClass = props.size,
 
             className =
-                ComponentHelper.buildClass(
+                ComponentUtils.buildClass(
                     `ui button ${type} sc-Button--${type}`,
                     sizeClass,
                     (text === null ? null : 'sc-has-text'),

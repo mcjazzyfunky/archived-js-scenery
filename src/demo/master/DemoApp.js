@@ -16,7 +16,7 @@ import SceneOfLayouts from '../scenes/SceneOfLayouts';
 import HorizontalLayout from '../../main/js/api/layout/HorizontalLayout';
 import VerticalLayout from '../../main/js/api/layout/VerticalLayout';
 
-import ComponentHelper from '../../main/js/api/helper/ComponentHelper';
+import ComponentUtils from '../../main/js/api/util/ComponentUtils';
 
 export default defineClassComponent({
     displayName: 'DemoApp',
@@ -122,7 +122,7 @@ const Toolbar = defineFunctionalComponent({
                 cells: [
                     {
                         content:
-                            ComponentHelper.createIconElement(props.logo),
+                            ComponentUtils.createIconElement(props.logo),
                         
                         flex: 0,
                         className: 'app-Toolbar-logo'
@@ -214,7 +214,7 @@ function renderMenu(items) {
                         
                         icon =
                             item.icon
-                                ? ComponentHelper.createIconElement(item.icon)
+                                ? ComponentUtils.createIconElement(item.icon)
                                 : null;
 
                     return h('li',

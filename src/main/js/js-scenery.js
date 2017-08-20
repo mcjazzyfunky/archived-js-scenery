@@ -5,4 +5,4 @@ export { default as DataTable } from './api/DataTable';
 export { default as Pagination } from './api/Pagination';
 
 // Helpers
-export { default as ComponentHelper } from './api/ComponentHelper';
+export { default as ComponentUtils } from './api/ComponentUtils';

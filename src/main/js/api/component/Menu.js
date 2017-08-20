@@ -6,7 +6,7 @@ import {
 import { Spec } from 'js-spec';
 import { Seq } from 'js-essential';
 import jQuery from 'jquery';
-import ComponentHelper from '../helper/ComponentHelper';
+import ComponentUtils from '../util/ComponentUtils';
 
 const menuItemSpec = Spec.or(
     Spec.shape({
@@ -102,7 +102,7 @@ function createItems(items, level = 0) {
         }
 
         if (item.icon) {
-            icon = ComponentHelper.createIconElement(item.icon);
+            icon = ComponentUtils.createIconElement(item.icon);
         }
 
         return (

@@ -493,7 +493,38 @@
     margin-top: 1em;
 }
 
+.sc-DataNavigator-filterBox {
+    background-repeat: no-repeat;
+    padding: 1em 2em;
+    display: inline-block;
+    position: relative;
+}
 
+.sc-DataNavigator-filterBox:before {
+    content: "\F233";
+    font-family: "Material Design Icons";
+    font-size: 18px;
+    opacity: 0.6;
+    position: absolute;
+    top: 1em;
+    left: 1em;
+}
+
+.sc-DataNavigator-filter {
+    margin: 0.2em 1em;
+}
+
+.sc-DataNavigator-filterLabel {
+    width: 8em;
+    max-width: 8em;
+    display: inline-block;
+    text-align: right;
+    padding: 0 0.8em;
+}
+
+.sc-DataNavigator-filterColumn {
+    float: left;
+}
 
 /*
 .sc-DataNavigator-header {
