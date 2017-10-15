@@ -1,5 +1,5 @@
 import {
-    createElement as h,
+    hyperscript as h,
     defineClassComponent
 } from 'js-surface';
 
@@ -8,24 +8,36 @@ import { Seq } from 'js-essential';
 import jQuery from 'jquery';
 import ComponentUtils from '../util/ComponentUtils';
 
-const menuItemSpec = Spec.or(
-    Spec.shape({
-        text: Spec.string,
-        icon: Spec.optional(Spec.string),
-        disabled: Spec.optional(Spec.boolean),
-        callback: Spec.optional(Spec.function)
-    }),
+const menuItemSpec =
+    Spec.or(
+        {
+            when:
+                it => it && !it.items,
 
-    Spec.shape({
-        text: Spec.string,
-        icon: Spec.optional(Spec.string),
-        className: Spec.optional(Spec.string),
-        items:
-            Spec.optional(
-                Spec.arrayOf(
-                    Spec.lazy(() => menuItemSpec)))
-    })
-);
+            check:
+                Spec.shape({
+                    text: Spec.string,
+                    icon: Spec.optional(Spec.string),
+                    disabled: Spec.optional(Spec.boolean),
+                    callback: Spec.optional(Spec.function)
+                }),
+        },
+        {
+            when:
+                it => it && it.items,
+
+            check:
+                Spec.shape({
+                    text: Spec.string,
+                    icon: Spec.optional(Spec.string),
+                    className: Spec.optional(Spec.string),
+                    disabled: Spec.optional(Spec.boolean), // TODO
+                    items:
+                        Spec.optional(
+                            Spec.arrayOf(
+                                Spec.lazy(() => menuItemSpec)))
+                })
+        });
 
 export default defineClassComponent({
     displayName: 'Menu',

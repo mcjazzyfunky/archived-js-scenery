@@ -1,5 +1,5 @@
 import {
-    createElement as h,
+    hyperscript as h,
     defineClassComponent
 } from 'js-surface';
 
@@ -9,7 +9,7 @@ import DataNavigator from '../../main/js/api/component/DataNavigator';
 const
     config =
         {
-            headline: 'Customers',
+            headline: 'Customer',
 
             actions: [
                 {

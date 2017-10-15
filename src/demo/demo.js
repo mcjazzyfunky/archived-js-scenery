@@ -1,8 +1,8 @@
 import {
-    render
+    mount 
 } from 'js-surface';
 
 import DemoApp from './master/DemoApp';
 
-render(DemoApp(), 'main-content');
+mount(DemoApp(), 'main-content');
 

@@ -1,7 +1,7 @@
 import SelectBox from './SelectBox';
 
 import {
-    createElement as h,
+    hyperscript as h,
     defineFunctionalComponent
 } from 'js-surface';
 
@@ -39,7 +39,7 @@ export default defineFunctionalComponent({
         const selectBox =
             SelectBox({
                 value: String(props.pageSize),
-                options: props.pageSizeOptions,
+                options: props.pageSizeOptions.map(String),
                 disabled: props.disabled,
                 onChange: ev => {
                     if (props.onChange) {

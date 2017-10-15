@@ -1,5 +1,5 @@
 import {
-    createElement as h,
+    hyperscript as h,
     defineClassComponent
 } from 'js-surface';
 
@@ -27,15 +27,24 @@ export default defineClassComponent({
 
             constraint:
                 Spec.or(
-                    Spec.arrayOf(
-                        Spec.string),
-
-                    Spec.arrayOf(
-                        Spec.shape({
-                            value: Spec.or(Spec.string, Spec.number),
-                            text: Spec.or(Spec.string, Spec.number)
-                        }))
-                )
+                    {
+                        when:
+                            it => it && typeof it[0] === 'string',
+                        
+                        check:
+                            Spec.arrayOf( Spec.string),
+                    },
+                    {
+                        when:
+                            it => it && it[0] && typeof it[0] === 'object',
+                        
+                        check:
+                            Spec.arrayOf(
+                                Spec.shape({
+                                    value: Spec.or(Spec.string, Spec.number),
+                                    text: Spec.or(Spec.string, Spec.number)
+                                }))
+                    })
         },
 
         disabled: {

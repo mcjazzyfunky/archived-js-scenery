@@ -1,7 +1,7 @@
 import TextField from './TextField';
 import PaginationUtils from '../../internal/util/PaginationUtils';
 
-import { defineFunctionalComponent, createElement as h } from 'js-surface';
+import { defineFunctionalComponent, hyperscript as h } from 'js-surface';
 import { Seq } from 'js-essential';
 import { Spec } from 'js-spec';
 

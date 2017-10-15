@@ -26,8 +26,8 @@ System.config({
             presets: ['es2017']
         },
         'js-surface': {
-            deps: ['js-spec', 'preact']
-            //deps: ['js-spec', 'react', 'react-dom']
+            //deps: ['js-spec', 'preact']
+            deps: ['js-spec', 'react', 'react-dom', 'preact', 'inferno', 'inferno-component', 'inferno-create-element']
         }
     },
 
@@ -36,9 +36,9 @@ System.config({
         'plugin-babel': 'node_modules/systemjs-plugin-babel/plugin-babel.js',
         'systemjs-babel-build': 'node_modules/systemjs-plugin-babel/systemjs-babel-browser.js',
 
-        'react': 'node_modules/react/dist/react.js',
+        'react': 'node_modules/react/umd/react.production.min.js',
+        'react-dom': 'node_modules/react-dom/umd/react-dom.production.min.js',
         'vue': 'node_modules/vue/dist/vue.min.js',
-        'react-dom': 'node_modules/react-dom/dist/react-dom.js',
 
         'react-lite': 'node_modules/react-lite/dist/react-lite.min.js',
         'preact': 'node_modules/preact/dist/preact.js',
@@ -49,7 +49,9 @@ System.config({
 
         'js-spec': 'node_modules/js-spec/dist/js-spec.min.js',
 
-        'js-surface': 'node_modules/js-surface/dist/preact.js',
+        'js-surface': 'node_modules/js-surface/src/main/js-surface-inferno.js',
+        //'js-surface': 'node_modules/js-surface/dist/inferno.js',
+        //'js-surface': 'node_modules/js-surface/dist/react.js',
         'js-essential': 'node_modules/js-essential/dist/js-essential/js-essential.js'
     }
 });

@@ -1,5 +1,5 @@
 import {
-    createElement as h,
+    hyperscript as h,
     defineClassComponent
 } from 'js-surface';
 
@@ -47,23 +47,7 @@ export default defineClassComponent({
         }
     },
 
-    publicMethods: {
-        blur() {
-            if (this._node) {
-                this._node.blur();
-            }
-        },
-
-        focus() {
-            if (this._node) {
-                this._node.focus();
-            }
-        },
-
-        setValue(value) {
-            this.setValue(value);
-        }
-    },
+    publicMethods: ['blur', 'focus', 'setValue'],
 
     constructor(props) {
         const value = props.value !== null
@@ -72,6 +56,18 @@ export default defineClassComponent({
 
         this.setValue(value);
         this._node = null;
+    },
+
+    blur() {
+        if (this._node) {
+            this._node.blur();
+        }
+    },
+
+    focus() {
+        if (this._node) {
+            this._node.focus();
+        }
     },
 
     setValue(value) {

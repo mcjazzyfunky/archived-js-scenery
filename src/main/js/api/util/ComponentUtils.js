@@ -1,5 +1,5 @@
 import { Strings } from 'js-essential';
-import { createElement as h } from 'js-surface';
+import { hyperscript as h } from 'js-surface';
 
 export default class ComponentUtils {
     static buildClass(...tokens) {

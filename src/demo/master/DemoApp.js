@@ -1,7 +1,8 @@
 import {
-    createElement as h,
+    hyperscript as h,
     defineClassComponent,
-    defineFunctionalComponent
+    defineFunctionalComponent,
+    ComponentSystem
 } from 'js-surface';
 
 import { Spec } from 'js-spec';
@@ -184,10 +185,10 @@ function buildItemsSpec(level =0) {
 const Sidebar = defineFunctionalComponent({
     displayName: 'Sidebar',
 
-    props: {
+    properties: {
         items: {
             type: Object,
-            constraint: buildItemsSpec()
+           // constraint: buildItemsSpec()
         }
     },
 

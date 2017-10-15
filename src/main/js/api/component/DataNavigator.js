@@ -1,5 +1,5 @@
 import {
-    createElement as h,
+    hyperscript as h,
     defineClassComponent
 } from 'js-surface';
 
@@ -20,6 +20,21 @@ import HorizontalLayout from '../layout/HorizontalLayout';
 import ComponentUtils from '../util/ComponentUtils';
 
 const
+    columnsSpec = 
+        Spec.arrayOf( 
+            Spec.or(
+                Spec.shape({
+                    title: Spec.string,
+                    field: Spec.string,
+                    width: Spec.optional(Spec.string),
+                    sortable: Spec.optional(Spec.boolean)
+                }),
+                Spec.shape({
+                    title: Spec.string,
+                    columns: Spec.lazy(() => columnsSpec)
+                })
+            )),
+            
     actionSpec =
         Spec.or(
             Spec.shape({
@@ -39,8 +54,12 @@ const
 
     dataNavSpec = Spec.shape({
         headline: Spec.optional(Spec.string),
-        actions: actionSpec,
-        columns: Spec.array,
+        
+        actions:
+            Spec.optional(
+                Spec.arrayOf(actionSpec)),
+        
+        columns: columnsSpec,
         filtering: Spec.optional(Spec.object)
     });
 
@@ -205,8 +224,12 @@ export default defineClassComponent({
             isLoading = this.state.loadingState === 'loading',
             lockLayer = isLoading ? this.createLockPane() : null,
             loadingBox = isLoading ? this.createLoadingBox() : null,
-            filterBox = this.createFilterBox();
+            filterBox = this.createFilterBox(),
 
+            tableConfig = {
+                columns: config.columns
+            };
+            
         return h('.sc-DataNavigator',
             lockLayer,
             loadingBox,
@@ -214,7 +237,7 @@ export default defineClassComponent({
                 className: 'sc-DataNavigator-dataTable',
                 contentAbove: h('div', toolbar, filterBox),
                 contentBelow: footer,
-                config,
+                config: tableConfig,
                 data,
                 dataOffset,
                 sorting: this.state.sorting || null,
@@ -260,18 +283,18 @@ export default defineClassComponent({
     createActionMenu(actions) {
         const
             items = actions.map(action => {
-                    const config = {
-                        text: action.text,
-                        icon: action.icon,
-                        disabled: false
-                    };
+                const config = {
+                    text: action.text,
+                    icon: action.icon,
+                    disabled: false
+                };
 
-                    if (action.actions) {
-                        config.items = this.buildActionMenuItems(action.actions);                
-                    }
+                if (action.actions) {
+                    config.items = this.buildActionMenuItems(action.actions); 
+                }
 
-                    return config;
-                }),
+                return config;
+            }),
 
             ret = h('div.sc-DataNavigator-action', Menu({ items }));
 
@@ -283,11 +306,23 @@ export default defineClassComponent({
 
         if (actions && actions.length > 0) {
             ret =
-                Seq.from(actions).map(action => ({
-                    text: action.text,
-                    icon: action.icon,
-                    items: this.buildActionMenuItems(action.actions) || undefined
-                })).toArray();
+                Seq.from(actions).map(action => {
+                    const ret = {
+                        text: action.text,
+                    };
+
+                    if (action.icon) {
+                        ret.icon = action.icon;
+                    }
+
+                    const items = this.buildActionMenuItems(action.actions);
+
+                    if (items) {
+                        ret.items = items;
+                    }
+
+                    return ret;
+                }).toArray();
         }
 
         return ret;
@@ -428,9 +463,6 @@ const FilterBox = defineClassComponent({
 
             currColumn.push(filters[i]);
         }
-
-
-        console.log(columns);
 
         const filterColumns = (
             h('.sc-DataNavigator-filterColumns',

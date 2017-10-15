@@ -2,29 +2,43 @@ import DataTableUtils from '../../internal/util/DataTableUtils';
 import VerticalLayout from '../../api/layout/VerticalLayout';
 
 import {
-    createElement as h,
+    hyperscript as h,
     defineClassComponent
 } from 'js-surface';
 
 import { Seq } from 'js-essential';
 import { Spec } from 'js-spec';
 
-const tableConfigSpec =
-    Spec.shape({
-        columns:
-            Spec.arrayOf( 
-                Spec.or(
+const columnsSpec = 
+    Spec.arrayOf( 
+        Spec.or(
+            {
+                when:
+                    it => it && !it.columns,
+                check:
                     Spec.shape({
                         title: Spec.string,
                         field: Spec.string,
+                        align: Spec.optional(Spec.oneOf('left', 'right', 'center')),
                         width: Spec.optional(Spec.string),
                         sortable: Spec.optional(Spec.boolean)
                     }),
+            },
+            {
+                when:
+                    it => it && it.columns,
+
+                check:
                     Spec.shape({
                         title: Spec.string,
-                        columns: Spec.lazy(() => tableConfigSpec.columns)
+                        columns: Spec.lazy(() => columnsSpec)
                     })
-                )),
+            })
+        );
+
+const tableConfigSpec =
+    Spec.shape({
+        columns: columnsSpec,
 
         showRecordNumbers:
             Spec.optional(Spec.boolean),

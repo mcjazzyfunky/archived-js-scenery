@@ -13,10 +13,12 @@
     "browserify": "^14.4.0",
     "chai": "~3.4.1",
     "font-awesome": "^4.7.0",
-    "inferno": "^3.6.4",
-    "inferno-component": "^3.6.4",
-    "inferno-create-element": "^3.6.4",
+    "inferno": "^3.9.0",
+    "inferno-component": "^3.9.0",
+    "inferno-create-element": "^3.9.0",
     "jquery": "^3.2.1",
+    "js-spec": "^0.1.19",
+    "js-surface": "^0.1.26",
     "kendo-ui-core": "^2017.2.621",
     "material-design-icons": "^3.0.1",
     "material-icons": "^0.1.0",
@@ -25,10 +27,9 @@
     "ngzip": "^1.1.3",
     "npm-font-open-sans": "^1.0.3",
     "preact": "^8.2.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "react-lite": "^0.15.37",
-    "semantic-ui": "^2.2.11",
     "shx": "^0.2.2",
     "systemjs": "^0.20.15",
     "systemjs-plugin-babel": "0.0.25",
@@ -48,8 +49,6 @@
   },
   "dependencies": {
     "font-awesome": "^4.7.0",
-    "js-essential": "^0.1.2",
-    "js-spec": "^0.1.16",
-    "js-surface": "^0.1.22"
+    "js-essential": "^0.1.2"
   }
 }

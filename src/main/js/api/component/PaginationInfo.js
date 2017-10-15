@@ -1,7 +1,7 @@
 import PaginationUtils from '../../internal/util/PaginationUtils';
 
 import {
-    createElement as h,
+    hyperscript as h,
     defineFunctionalComponent
 } from 'js-surface';
 

@@ -1,5 +1,5 @@
 import {
-    createElement as h,
+    hyperscript as h,
     defineFunctionalComponent
 } from 'js-surface';
 
@@ -32,7 +32,7 @@ export default defineFunctionalComponent({
         cells: {
             type: Array,
 
-            constraints: Spec.arrayOf(
+            constraint: Spec.arrayOf(
                 Spec.shape({
                     content: Spec.any,
                     flex: Spec.optional(Spec.nonnegativeInteger),
