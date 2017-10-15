@@ -49,8 +49,8 @@ System.config({
 
         'js-spec': 'node_modules/js-spec/dist/js-spec.min.js',
 
-        'js-surface': 'node_modules/js-surface/src/main/js-surface-inferno.js',
-        //'js-surface': 'node_modules/js-surface/dist/inferno.js',
+        //'js-surface': 'node_modules/js-surface/src/main/js-surface-inferno.js',
+        'js-surface': 'node_modules/js-surface/dist/inferno.js',
         //'js-surface': 'node_modules/js-surface/dist/react.js',
         'js-essential': 'node_modules/js-essential/dist/js-essential/js-essential.js'
     }
