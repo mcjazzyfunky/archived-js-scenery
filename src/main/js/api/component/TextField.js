@@ -1,7 +1,7 @@
 import {
-    hyperscript as h,
+    createElement as h,
     defineClassComponent
-} from 'js-surface';
+} from 'js-glow';
 
 export default defineClassComponent({
     displayName: 'TextField',
@@ -14,7 +14,7 @@ export default defineClassComponent({
 
         defaultValue: {
             type: String,
-            defaultValue: null
+            defaultValue: '' 
         },
 
         disabled: {

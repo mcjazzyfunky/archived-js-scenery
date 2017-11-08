@@ -1,7 +1,7 @@
 import {
-    hyperscript as h,
+    createElement as h,
     defineClassComponent
-} from 'js-surface';
+} from 'js-glow';
 
 import { Spec }
     from 'js-spec';
@@ -23,37 +23,71 @@ const
     columnsSpec = 
         Spec.arrayOf( 
             Spec.or(
-                Spec.shape({
-                    title: Spec.string,
-                    field: Spec.string,
-                    width: Spec.optional(Spec.string),
-                    sortable: Spec.optional(Spec.boolean)
-                }),
-                Spec.shape({
-                    title: Spec.string,
-                    columns: Spec.lazy(() => columnsSpec)
-                })
+                {
+                    when: it => it.columns === undefined,
+
+                    check:
+                        Spec.shape({
+                            title: Spec.string,
+                            field: Spec.string,
+                            width: Spec.optional(Spec.string),
+                            sortable: Spec.optional(Spec.boolean),
+                            align:
+                                Spec.optional(
+                                    Spec.oneOf('left', 'right', 'center'))
+                        }),
+                },
+                {
+                    when: it => it.columns !== undefined,
+
+                    check:
+                        Spec.shape({
+                            title: Spec.string,
+                            columns: Spec.lazy(() => columnsSpec),
+                            align:
+                                Spec.optional(
+                                    Spec.oneOf('left', 'right', 'center'))
+                        })
+                }
             )),
             
     actionSpec =
-        Spec.or(
-            Spec.shape({
-                type: Spec.oneOf('general', 'single-row', 'multi-row'),
-                text: Spec.string,
-                icon: Spec.optional(Spec.string),
-                callback: Spec.function,
-                ignore: Spec.optional(Spec.boolean)
-            }),
-            Spec.shape({
-                type: Spec.is('menu'),
-                text: Spec.string,
-                actions: Spec.lazy(() => actionSpec),
-                ignore: Spec.optional(Spec.boolean)                
-            })
-        ),    
+        Spec.or({
+            when:
+                it => it.actions === undefined,
+
+            check:
+                Spec.shape({
+                    type: Spec.oneOf('general', 'single-row', 'multi-row'),
+                    text: Spec.string,
+                    icon: Spec.optional(Spec.string),
+                    callback: Spec.optional(Spec.function),
+                    ignore: Spec.optional(Spec.boolean)
+                })
+        },
+        {
+            when:
+                it => it.actions,
+
+            check:
+                Spec.shape({
+                    type: Spec.is('menu'),
+                    text: Spec.string,
+                    icon: Spec.optional(Spec.string),
+                    actions: Spec.arrayOf(Spec.lazy(() => actionSpec)),
+                    ignore: Spec.optional(Spec.boolean)                
+                })
+        }),    
 
     dataNavSpec = Spec.shape({
         headline: Spec.optional(Spec.string),
+       
+        selectionMode: Spec.oneOf('single', 'multi', 'none'),
+
+        expandableRows:
+            Spec.shape({
+                getContent: Spec.function
+            }),
         
         actions:
             Spec.optional(
@@ -64,7 +98,7 @@ const
     });
 
 export default defineClassComponent({
-    displayName: 'DataNaviagator',
+    displayName: 'DataNavigator',
 
     properties: {
         config: {
@@ -438,7 +472,12 @@ export default defineClassComponent({
 const FilterBox = defineClassComponent({
     displayName: 'DataNavigator_FilterBox',
 
-    properties: ['config'],
+    // TODO
+    properties: {
+        config: {
+
+        }
+    },
 
     render() {
         const

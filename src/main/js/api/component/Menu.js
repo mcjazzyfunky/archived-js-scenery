@@ -1,7 +1,7 @@
 import {
-    hyperscript as h,
+    createElement as h,
     defineClassComponent
-} from 'js-surface';
+} from 'js-glow';
 
 import { Spec } from 'js-spec';
 import { Seq } from 'js-essential';
@@ -64,9 +64,12 @@ export default defineClassComponent({
     },
 
     kendoify() {
-        jQuery(this._nodeRef).kendoMenu({
-            direction: this.props.direction
-        });
+        // TODO
+        if (jQuery.fn.kendoMenu) {
+            jQuery(this._nodeRef).kendoMenu({
+                direction: this.props.direction
+            });
+        }
     },
 
     unkendoify() {

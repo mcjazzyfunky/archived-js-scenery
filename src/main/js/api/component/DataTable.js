@@ -2,9 +2,9 @@ import DataTableUtils from '../../internal/util/DataTableUtils';
 import VerticalLayout from '../../api/layout/VerticalLayout';
 
 import {
-    hyperscript as h,
+    createElement as h,
     defineClassComponent
-} from 'js-surface';
+} from 'js-glow';
 
 import { Seq } from 'js-essential';
 import { Spec } from 'js-spec';
@@ -184,7 +184,7 @@ export default defineClassComponent({
 
                         content:
                             h('table.sc-DataTable-table.sc-DataTable-header.sc-DataTable-headerTable',
-                                { ref: this.setHeaderTableNode },
+                                { ref: it => this.setHeaderTableNode(it) },
                                 this.createTableColGroup(details),
                                 this.createTableHead(details)),
                         

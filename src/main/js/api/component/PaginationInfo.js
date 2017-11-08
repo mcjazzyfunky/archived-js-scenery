@@ -1,9 +1,9 @@
 import PaginationUtils from '../../internal/util/PaginationUtils';
 
 import {
-    hyperscript as h,
+    createElement as h,
     defineFunctionalComponent
-} from 'js-surface';
+} from 'js-glow';
 
 import { Spec } from 'js-spec';
 

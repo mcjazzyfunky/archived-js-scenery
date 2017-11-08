@@ -1,7 +1,7 @@
 import {
-    hyperscript as h,
+    createElement as h,
     defineClassComponent
-} from 'js-surface';
+} from 'js-glow';
 
 import { Spec } from 'js-spec';
 import jQuery from 'jquery';
@@ -124,7 +124,8 @@ export default defineClassComponent({
     },
 
     kendoify() {
-        if (this._selectNode) {
+        // TODO
+        if (this._selectNode && jQuery.fn.kendoDropDownList) {
             jQuery(this._selectNode)
                 .on('change', this.onChange)
                 .kendoDropDownList({

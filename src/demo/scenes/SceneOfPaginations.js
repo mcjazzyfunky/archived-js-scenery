@@ -1,7 +1,7 @@
 import {
-    hyperscript as h,
+    createElement as h,
     defineClassComponent
-} from 'js-surface';
+} from 'js-glow';
 
 import Paginator from '../../main/js/api/component/Paginator';
 import PageSizeSelector from '../../main/js/api/component/PageSizeSelector';

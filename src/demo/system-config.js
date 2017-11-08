@@ -25,9 +25,9 @@ System.config({
             deps: ['jquery'],
             presets: ['es2017']
         },
-        'js-surface': {
+        'js-glow': {
             //deps: ['js-spec', 'preact']
-            deps: ['js-spec', 'react', 'react-dom', 'preact', 'inferno', 'inferno-component', 'inferno-create-element']
+            deps: ['js-surface', 'js-spec', 'react', 'react-dom', 'preact', 'inferno', 'inferno-component', 'inferno-create-element']
         }
     },
 
@@ -48,10 +48,11 @@ System.config({
         'inferno-create-element': 'node_modules/inferno-create-element/dist/inferno-create-element.min.js',
 
         'js-spec': 'node_modules/js-spec/dist/js-spec.min.js',
+        'js-glow': 'node_modules/js-glow/dist/js-glow.min.js',
 
-        //'js-surface': 'node_modules/js-surface/src/main/js-surface-inferno.js',
-        'js-surface': 'node_modules/js-surface/dist/inferno.js',
-        //'js-surface': 'node_modules/js-surface/dist/react.js',
+        //'js-glow': 'node_modules/js-glow/src/main/js-glow-inferno.js',
+        //'js-surface': 'node_modules/js-surface/dist/inferno.js',
+        'js-surface': 'node_modules/js-surface/dist/react.js',
         'js-essential': 'node_modules/js-essential/dist/js-essential/js-essential.js'
     }
 });

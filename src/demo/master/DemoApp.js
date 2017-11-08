@@ -1,9 +1,9 @@
 import {
-    hyperscript as h,
+    createElement as h,
     defineClassComponent,
     defineFunctionalComponent,
     ComponentSystem
-} from 'js-surface';
+} from 'js-glow';
 
 import { Spec } from 'js-spec';
 import { Seq } from 'js-essential';

@@ -1,5 +1,5 @@
 import { Strings } from 'js-essential';
-import { hyperscript as h } from 'js-surface';
+import { createElement as h } from 'js-glow';
 
 export default class ComponentUtils {
     static buildClass(...tokens) {

@@ -1,6 +1,6 @@
 import {
     mount 
-} from 'js-surface';
+} from 'js-glow';
 
 import DemoApp from './master/DemoApp';
 

@@ -1,7 +1,7 @@
 import {
-    hyperscript as h,
+    createElement as h,
     defineFunctionalComponent
-} from 'js-surface';
+} from 'js-glow';
 
 import VerticalLayout from '../../main/js/api/layout/VerticalLayout';
 import HorizontalLayout from '../../main/js/api/layout/HorizontalLayout';
